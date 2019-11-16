@@ -13,6 +13,8 @@
 			<th scope="col">Ctrl</th>
 			<th scope="col">Alt</th>
 			<th scope="col">CapsLock</th>
+			<th scope="col">NumLock</th>
+			<th scope="col">AltGr</th>
 			<th scope="col">Key</th>
 		</tr>
 		</thead>
@@ -20,10 +22,12 @@
 		{% for cuia in sorted(config['UI_KEYBINDING_MAP']) %}
 		<tr>
 			<th scope="row">{{escape(cuia)}}</th>
-			<td><input type="checkbox" name="{{cuia}}:shift" {% if config['UI_KEYBINDING_MAP'][cuia]['modifier'] & 1 %} checked {% end %}></td>
-			<td><input type="checkbox" name="{{cuia}}:ctrl" {% if config['UI_KEYBINDING_MAP'][cuia]['modifier'] & 4 %} checked {% end %}></td>
-			<td><input type="checkbox" name="{{cuia}}:alt" {% if config['UI_KEYBINDING_MAP'][cuia]['modifier'] & 8 %} checked {% end %}></td>
-			<td><input type="checkbox" name="{{cuia}}:caps" {% if config['UI_KEYBINDING_MAP'][cuia]['modifier'] & 2 %} checked {% end %}></td>
+			<td><input type="checkbox" name="{{cuia}}:shift" {% if config['UI_KEYBINDING_MAP'][cuia]['modifier'] & 0x01 %} checked {% end %}></td>
+			<td><input type="checkbox" name="{{cuia}}:ctrl" {% if config['UI_KEYBINDING_MAP'][cuia]['modifier'] & 0x04 %} checked {% end %}></td>
+			<td><input type="checkbox" name="{{cuia}}:alt" {% if config['UI_KEYBINDING_MAP'][cuia]['modifier'] & 0x08 %} checked {% end %}></td>
+			<td><input type="checkbox" name="{{cuia}}:caps" {% if config['UI_KEYBINDING_MAP'][cuia]['modifier'] & 0x02 %} checked {% end %}></td>
+			<td><input type="checkbox" name="{{cuia}}:num" {% if config['UI_KEYBINDING_MAP'][cuia]['modifier'] & 0x10 %} checked {% end %}></td>
+			<td><input type="checkbox" name="{{cuia}}:altgr" {% if config['UI_KEYBINDING_MAP'][cuia]['modifier'] & 0x80 %} checked {% end %}></td>
 			<td><input name="{{cuia}}:keysym" type="text" value="{{escape(config['UI_KEYBINDING_MAP'][cuia]['keysym'])}}"></td>
 		</tr>
 		{% end %}
