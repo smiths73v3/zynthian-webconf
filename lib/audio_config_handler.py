@@ -164,6 +164,13 @@ class AudioConfigHandler(ZynthianConfigHandler):
 		else:
 			enable_custom_text = ""
 
+		zc_config=OrderedDict([
+			['AVAILABLE_ZCONTROLLS', {
+				'options': list(),
+				'option_labels': list()
+			}],
+		])
+
 		config=OrderedDict([
 			['SOUNDCARD_NAME', {
 				'type': 'select',
@@ -211,6 +218,17 @@ class AudioConfigHandler(ZynthianConfigHandler):
 			['AUDIO_MIXER_JS', {
 				'type': 'jscript',
 				'script_file': "audio_mixer.js"
+			}],
+			['ZYNTHIAN_ZCONTROLLERS', {
+				'type': 'textarea',
+				'title': 'ZControllers',
+				'value': os.environ.get('ZYNTHIAN_ZCONTROLLERS'),
+				'cols': 50,
+				'rows': 5,
+				'addButton': 'display_zcontroller_panel',
+				'addPanel': 'zcontroller.html',
+				'addPanelConfig': zc_config,
+				'advanced': True
 			}]
 		])
 

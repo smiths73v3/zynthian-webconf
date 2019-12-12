@@ -1,0 +1,33 @@
+<div id="zcontroller_panel" class="modal">
+    <div class="modal-content">
+
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title">ZControllers</h4>
+		</div>
+
+		<div class="modal-body">
+        </div>
+
+    </div>
+</div>
+
+<script>
+	$(document).ready(function() {
+	$('#display_zcontroller_panel').click(function(){
+		$('#zcontroller_panel').show(500)
+	});
+
+	$('#zcontroller_panel .close').click(function(){
+		$('#zcontroller_panel').hide(500)
+	});
+
+	window.onclick = function(event) {
+		if (event.target == document.getElementById('zcontroller_panel')) {
+			$('#zcontroller_panel').hide(500);
+		}
+	}
+});
+
+
+</script>
