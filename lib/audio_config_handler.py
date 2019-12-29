@@ -166,11 +166,7 @@ class AudioConfigHandler(ZynthianConfigHandler):
 			enable_custom_text = ""
 
 		zc_config=OrderedDict([
-			['ZCONTROLLERS',self.get_controllers()],
-			['AVAILABLE_ZCONTROLLS', {
-				'options': list(),
-				'option_labels': list()
-			}],
+			['ZCONTROLLERS',self.get_controllers()]
 		])
 
 		logging.info(zc_config)
@@ -224,10 +220,10 @@ class AudioConfigHandler(ZynthianConfigHandler):
 				'type': 'jscript',
 				'script_file': "audio_mixer.js"
 			}],
-			['ZYNTHIAN_ZCONTROLLERS', {
+			['ZYNTHIAN_CONTROLLERS', {
 				'type': 'textarea',
-				'title': 'ZControllers',
-				'value': os.environ.get('ZYNTHIAN_ZCONTROLLERS'),
+				'title': 'Zynthian Controllers',
+				'value': os.environ.get('ZYNTHIAN_CONTROLLERS'),
 				'cols': 50,
 				'rows': 5,
 				'addButton': 'display_zcontroller_panel',
@@ -357,8 +353,10 @@ class AudioConfigHandler(ZynthianConfigHandler):
 
 	def get_controllers(self):
 		try:
+			zynthian_engine_mixer.init_zynapi_instance()
 			return zynthian_engine_mixer.zynapi_get_controllers()
-		except:
+		except Exception as err:
+			logging.error(err)
 			return list()
 
 
