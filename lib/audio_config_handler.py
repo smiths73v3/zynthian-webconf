@@ -29,6 +29,7 @@ import tornado.web
 from collections import OrderedDict
 from subprocess import check_output, call
 from lib.zynthian_config_handler import ZynthianConfigHandler
+from zyngine.zynthian_engine_mixer import *
 
 #------------------------------------------------------------------------------
 # Audio Configuration
@@ -165,11 +166,15 @@ class AudioConfigHandler(ZynthianConfigHandler):
 			enable_custom_text = ""
 
 		zc_config=OrderedDict([
+			['ZCONTROLLERS',self.get_controllers()],
 			['AVAILABLE_ZCONTROLLS', {
 				'options': list(),
 				'option_labels': list()
 			}],
 		])
+
+		logging.info(zc_config)
+
 
 		config=OrderedDict([
 			['SOUNDCARD_NAME', {
@@ -349,4 +354,11 @@ class AudioConfigHandler(ZynthianConfigHandler):
 			return res.group(1)
 		except:
 			return "0"
+
+	def get_controllers(self):
+		try:
+			return zynthian_engine_mixer.zynapi_get_controllers()
+		except:
+			return list()
+
 
