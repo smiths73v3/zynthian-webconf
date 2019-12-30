@@ -1,6 +1,6 @@
 
 $(document).ready(function () {
-	$("input[data-provide='slider']").change(function(ev) {
+	$("input[data-provide='slider']").on('slideStop',function(ev){
 		var ctrl = $(ev.target).attr('id')
 		var val = $(ev.target).val()
 		if (ctrl.substr(0,12)=="ALSA_VOLUME_") ctrl = ctrl.substr(12)
