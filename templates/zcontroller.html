@@ -19,7 +19,7 @@
 {% for controllername in config['ZCONTROLLERS'] %}
 				<tr>
 					<td><input type="checkbox" name="ZYNTHIAN_CONTROLLER_VISIBLE_{{ controllername}}" value="{{ controllername }}" /></td>
-					<td>{{  config['ZCONTROLLERS'][controllername].name  + ' ' +  str(config['ZCONTROLLERS'][controllername].value_max) }}</td>
+					<td>{{  config['ZCONTROLLERS'][controllername].name }}</td>
 					<td>
 {% if config['ZCONTROLLERS'][controllername].is_integer %}
 						<input type="text" id="ZYNTHIAN_CONTROLLER_VALUE_{{ escape(controllername) }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ escape(controllername) }}" data-provide="slider"
