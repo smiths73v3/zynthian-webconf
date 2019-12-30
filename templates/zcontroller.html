@@ -19,16 +19,17 @@
 {% for controllername in config['ZCONTROLLERS'] %}
 				<tr>
 					<td><input type="checkbox" name="ZYNTHIAN_CONTROLLER_VISIBLE_{{ controllername}}" value="{{ controllername }}" /></td>
-					<td>{{ controllername }}</td>
+					<td>{{  config['ZCONTROLLERS'][controllername].name  + ' ' +  str(config['ZCONTROLLERS'][controllername].value_max) }}</td>
 					<td>
 {% if config['ZCONTROLLERS'][controllername].is_integer %}
 						<input type="text" id="ZYNTHIAN_CONTROLLER_VALUE_{{ escape(controllername) }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ escape(controllername) }}" data-provide="slider"
-				data-slider-min="0"
-				data-slider-max="100"
+				data-slider-min="{{ config['ZCONTROLLERS'][controllername].value_min }}"
+				data-slider-max="{{ config['ZCONTROLLERS'][controllername].value_max }}"
 				data-slider-step="1"
 				data-slider-value="{{ config['ZCONTROLLERS'][controllername].get_value() }}"
 				data-slider-tooltip="show"
 						/>
+						<script src="../js/audio_mixer.js"></script>
 {% end %}
 					</td>
 				</tr>
