@@ -21,8 +21,19 @@
 					<td><input type="checkbox" name="ZYNTHIAN_CONTROLLER_VISIBLE_{{ controllername}}" value="{{ controllername }}" /></td>
 					<td>{{  config['ZCONTROLLERS'][controllername].name }}</td>
 					<td>
-{% if config['ZCONTROLLERS'][controllername].is_integer %}
-						<input type="range" id="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ escape(controllername) }}" data-provide="slider"
+{% if config['ZCONTROLLERS'][controllername].is_toggle %} 
+						<input type="checkbox"
+							data-provide="checkbox"
+							id="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" value="1" />
+
+{% elif config['ZCONTROLLERS'][controllername].labels %}
+						<select id="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" >
+{% for item_label in config['ZCONTROLLERS'][controllername].labels %}
+		<option value="{{ item_label }}" >{{ item_label }}</option>
+{% end %}						
+						</select>
+{% elif config['ZCONTROLLERS'][controllername].is_integer %}
+						<input type="range" id="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" data-provide="slider"
 				data-slider-min="{{ config['ZCONTROLLERS'][controllername].value_min }}"
 				data-slider-max="{{ config['ZCONTROLLERS'][controllername].value_max }}"
 				data-slider-step="1"
