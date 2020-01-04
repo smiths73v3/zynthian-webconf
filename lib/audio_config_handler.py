@@ -156,7 +156,6 @@ class AudioConfigHandler(ZynthianConfigHandler):
 		}]
 	])
 
-
 	@tornado.web.authenticated
 	def get(self, errors=None):
 
@@ -170,7 +169,6 @@ class AudioConfigHandler(ZynthianConfigHandler):
 		])
 
 		logging.info(zc_config)
-
 
 		config=OrderedDict([
 			['SOUNDCARD_NAME', {
@@ -210,22 +208,11 @@ class AudioConfigHandler(ZynthianConfigHandler):
 				'advanced': True
 			}],
 			['SOUNDCARD_MIXER', {
-				'type': 'text',
+				'type': 'textarea',
 				'title': "Mixer Controls{}".format(enable_custom_text),
 				'value': os.environ.get('SOUNDCARD_MIXER'),
-				'advanced': True,
-				'disabled': enable_custom_text!=""
-			}],
-			['AUDIO_MIXER_JS', {
-				'type': 'jscript',
-				'script_file': "audio_mixer.js"
-			}],
-			['ZYNTHIAN_CONTROLLERS', {
-				'type': 'textarea',
-				'title': 'Zynthian Controllers',
-				'value': os.environ.get('ZYNTHIAN_CONTROLLERS'),
 				'cols': 50,
-				'rows': 5,
+				'rows': 3,
 				'addButton': 'display_zcontroller_panel',
 				'addPanel': 'zcontroller.html',
 				'addPanelConfig': zc_config,
@@ -233,10 +220,7 @@ class AudioConfigHandler(ZynthianConfigHandler):
 			}]
 		])
 
-		self.get_mixer_controls(config)
-
 		super().get("Audio", config, errors)
-
 
 	@tornado.web.authenticated
 	def post(self):
@@ -245,103 +229,6 @@ class AudioConfigHandler(ZynthianConfigHandler):
 		errors=self.update_config(postedConfig)
 		self.reboot_flag = True
 		self.get(errors)
-
-
-	def get_mixer_controls(self, config):
-		mixerControl = None
-		controlName = ''
-		is_capture = False
-		is_playback = False
-
-		device_name = self.get_device_name()
-		logging.debug("AUDIO DEVICE NAME => {}".format(device_name))
-
-		try:
-			scMixer = config['SOUNDCARD_MIXER']['value']
-			if scMixer is None:
-				scMixer = self.soundcard_presets[os.environ.get('SOUNDCARD_NAME')]['SOUNDCARD_MIXER']
-				config['SOUNDCARD_MIXER']['value'] = scMixer
-				self.soundcard_mixer = scMixer.split(',')
-			elif scMixer.strip()=='':
-				self.soundcard_mixer = None
-			else:
-			 self.soundcard_mixer = scMixer.split(',')
-		except:
-			self.soundcard_mixer = None
-
-		volumePercent = ''
-		idx = 0
-		try:
-			for byteLine in check_output("amixer -M -c {}".format(device_name), shell=True).splitlines():
-				line = byteLine.decode("utf-8")
-
-				if line.find('Simple mixer control')>=0:
-					if controlName and (is_capture or is_playback):
-						if is_capture:
-							self.add_mixer_control(config, mixerControl, controlName, volumePercent, 'Capture')
-						else:
-							self.add_mixer_control(config, mixerControl, controlName, volumePercent, 'Playback')
-
-					mixerControl = {
-						'type': 'slider',
-						'id': idx,
-						'title': '',
-						'value': 0,
-						'min': 0,
-						'max': 100,
-						'step': 1,
-						'advanced': False
-					}
-					controlName = ''
-					is_capture = False
-					is_playback = False
-
-
-					volumePercent = ''
-					idx += 1
-					m = re.match("Simple mixer control '(.*?)'.*", line, re.M | re.I)
-					if m:
-						controlName = m.group(1).strip()
-
-				elif line.find('Capture channels:')>=0:
-						is_capture = True
-
-				elif line.find('Playback channels:')>=0:
-						is_playback = True
-
-				else:
-					m = re.match(".*(Playback|Capture).*\[(\d*)%\].*", line, re.M | re.I)
-					if m:
-						volumePercent = m.group(2)
-						if m.group(1) == 'Capture':
-							is_capture = True
-						else:
-							is_playback = True
-					else:
-						m = re.match(".*\[(\d*)%\].*", line, re.M | re.I)
-						if m:
-							volumePercent = m.group(1)
-
-			if controlName and (is_playback or is_capture):
-				if is_playback:
-					self.add_mixer_control(config, mixerControl, controlName, volumePercent, 'Playback')
-				else:
-					self.add_mixer_control(config, mixerControl, controlName, volumePercent, 'Capture')
-
-		except Exception as err:
-			logging.error(err)
-
-
-	def add_mixer_control(self, config, mixerControl, controlName, volumePercent, channelType):
-		logging.debug("ADD MIXER CONTROL '{}' => {}".format(mixerControl, controlName))
-
-		realControlName = controlName.replace(' ','_')
-		if not self.soundcard_mixer or realControlName in self.soundcard_mixer:
-			configKey = 'ALSA_VOLUME_' + channelType + '_' + realControlName
-			mixerControl['title'] = channelType + ' ' + controlName
-			mixerControl['value'] = volumePercent
-			config[configKey] = mixerControl
-
 
 	def get_device_name(self):
 		try:
@@ -354,6 +241,7 @@ class AudioConfigHandler(ZynthianConfigHandler):
 	def get_controllers(self):
 		try:
 			zynthian_engine_mixer.init_zynapi_instance()
+			zynthian_engine_mixer.ctrl_list = []
 			return zynthian_engine_mixer.zynapi_get_controllers()
 		except Exception as err:
 			logging.error(err)

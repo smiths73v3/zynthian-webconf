@@ -18,7 +18,9 @@
 			<tbody>
 {% for controllername in config['ZCONTROLLERS'] %}
 				<tr>
-					<td><input type="checkbox" name="ZYNTHIAN_CONTROLLER_VISIBLE_{{ controllername}}" value="{{ controllername }}" /></td>
+					<td><input type="checkbox"
+							   id="ZYNTHIAN_CONTROLLER_VISIBLE_{{ controllername }}"
+							   name="ZYNTHIAN_CONTROLLER_VISIBLE_{{ controllername }}" value="{{ controllername }}" /></td>
 					<td>{{  config['ZCONTROLLERS'][controllername].name }}</td>
 					<td>
 {% if config['ZCONTROLLERS'][controllername].is_toggle %} 
@@ -56,9 +58,18 @@
 </div>
 
 <script>
-	$(document).ready(function() {
+$(document).ready(function() {
+
 	$('#display_zcontroller_panel').click(function(){
-		$('#zcontroller_panel').show(500)
+		scMixers = $('#SOUNDCARD_MIXER')[0].value.split();
+
+		for (idx in scMixers){
+			for (idx2 in $('#ZYNTHIAN_CONTROLLER_VISIBLE_' + scMixers[idx].trim())){
+				$('#ZYNTHIAN_CONTROLLER_VISIBLE_' + scMixers[idx].trim())[idx2].checked = true;
+			}
+
+		}
+		$('#zcontroller_panel').show(500);
 	});
 
 
@@ -82,7 +93,7 @@
 });
 
 function refreshZynthianControllers(){
-	zynthianControllersTextarea = document.getElementById('ZYNTHIAN_CONTROLLERS') ;
+	zynthianControllersTextarea = document.getElementById('SOUNDCARD_MIXER') ;
 
 	zynthianControllersTextarea.value = '';
 	visibleControllers = $("input[name^=ZYNTHIAN_CONTROLLER_VISIBLE_]:checkbox:checked");
