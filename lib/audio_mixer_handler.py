@@ -27,6 +27,8 @@ import re
 import logging
 import tornado.web
 from subprocess import check_output
+from lib.zynthian_websocket_handler import ZynthianWebSocketMessageHandler, ZynthianWebSocketMessage
+
 
 #------------------------------------------------------------------------------
 # Audio Configuration
@@ -76,4 +78,25 @@ class AudioMixerHandler(tornado.web.RequestHandler):
 			return res.group(1)
 		except:
 			return "0"
+
+class AudioConfigMessageHandler(ZynthianWebSocketMessageHandler):
+	logging_thread = None
+
+
+	@classmethod
+	def is_registered_for(cls, handler_name):
+		return handler_name == 'AudioConfigMessageHandler'
+
+
+
+	def on_websocket_message(self, action):
+		logging.debug("action: %s " % action)
+
+		logging.debug("message handled.")  # this needs to show up early to get the socket working again.
+
+
+	def on_close(self):
+		if AudioConfigMessageHandler.logging_thread:
+			AudioConfigMessageHandler.logging_thread.stop()
+
 

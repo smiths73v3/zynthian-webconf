@@ -1,6 +1,10 @@
 function changeMixerValue(ctrl, val){
 	console.log("Audio Mixer Set: " + ctrl + " = " + val)
 
+	var socketMessage = {"handler_name": "AudioConfigMessageHandler", "data": 'UPDATE_AUDIO_MIXER/' + ctrl + "/" + val};
+	window.zynthianSocket.send(JSON.stringify(socketMessage));
+
+/*
 	$.post("hw-audio-mixer/" + ctrl + "/" + val,
              null,
              function(data, status) {
@@ -13,6 +17,7 @@ function changeMixerValue(ctrl, val){
               	}
              }
          );
+         */
 }
 
 $(document).ready(function () {

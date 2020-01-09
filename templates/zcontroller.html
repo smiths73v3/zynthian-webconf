@@ -90,6 +90,20 @@ $(document).ready(function() {
 			alert('Saving the controllers failed!');
 		}
 	}
+
+	var deferred = $.Deferred();
+	deferred.done(function(value) {
+		window.zynthianSocket.registerHandler('AudioConfigMessageHandlers', function(data) {
+			if (data){
+				console.log("AudioConfigMessageHandler:onmessage:", data);
+
+			}
+		});
+
+		//var socketMessage = {"handler_name": "AudioConfigMessageHandler", "data": 'SHOW_DEFAULT'};
+		//window.zynthianSocket.send(JSON.stringify(socketMessage));
+	});
+	connectZynthianWebSocket(deferred);
 });
 
 function refreshZynthianControllers(){
@@ -104,4 +118,5 @@ function refreshZynthianControllers(){
 
 	return true;	
 }
+
 </script>
