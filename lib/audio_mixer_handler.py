@@ -28,6 +28,7 @@ import logging
 import tornado.web
 from subprocess import check_output
 from lib.zynthian_websocket_handler import ZynthianWebSocketMessageHandler, ZynthianWebSocketMessage
+from zyngine.zynthian_engine_mixer import *
 
 
 #------------------------------------------------------------------------------
@@ -89,14 +90,25 @@ class AudioConfigMessageHandler(ZynthianWebSocketMessageHandler):
 
 
 
-	def on_websocket_message(self, action):
-		logging.debug("action: %s " % action)
+	def on_websocket_message(self, action_with_parameters):
+		logging.debug("action: %s " % action_with_parameters)
 
+		(action, parm1, parm2) = action_with_parameters.split("/")
+
+		if action == 'UPDATE_AUDIO_MIXER':
+			self.do_update_audio_mixer(parm1, parm2)
+		else:
+			logging.error('Unknown action {}'.format(action))
 		logging.debug("message handled.")  # this needs to show up early to get the socket working again.
 
 
 	def on_close(self):
 		if AudioConfigMessageHandler.logging_thread:
 			AudioConfigMessageHandler.logging_thread.stop()
+
+	def do_update_audio_mixer(self, zcontroller_name, value):
+		#zynthian_engine_mixer.init_zynapi_instance()
+		#zynthian_engine_mixer.ctrl_list = []
+		logging.debug('Changing value of {} to {}'.format(zcontroller_name, value))
 
 
