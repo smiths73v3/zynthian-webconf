@@ -34,7 +34,7 @@ $(document).ready(function () {
                 var ctrl = $(ev.target).attr('id')
                 var val = $(ev.target).val()
 		if (!$(ev.target)[0].checked){
-			val="0";
+			val="off";
 		}
                 if (ctrl.substr(0,26)=="ZYNTHIAN_CONTROLLER_VALUE_") ctrl = ctrl.substr(26)
 

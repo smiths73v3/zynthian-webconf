@@ -19,22 +19,22 @@
 {% for controllername in config['ZCONTROLLERS'] %}
 				<tr>
 					<td><input type="checkbox"
-							   id="ZYNTHIAN_CONTROLLER_VISIBLE_{{ config['ZCONTROLLERS'][controllername].graph_path[0]  }}"
-							   name="ZYNTHIAN_CONTROLLER_VISIBLE_{{ config['ZCONTROLLERS'][controllername].graph_path[0]  }}" value="{{ controllername }}" /></td>
+							   id="ZYNTHIAN_CONTROLLER_VISIBLE_{{ controllername  }}"
+							   name="ZYNTHIAN_CONTROLLER_VISIBLE_{{ config['ZCONTROLLERS'][controllername].graph_path[0]  }}" value="{{ config['ZCONTROLLERS'][controllername].name }}" /></td>
 					<td>{{  config['ZCONTROLLERS'][controllername].name  }}</td>
 					<td>
 {% if config['ZCONTROLLERS'][controllername].is_toggle %} 
 						<input type="checkbox"
 							data-provide="checkbox"
-							id="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" value="on" {% if config['ZCONTROLLERS'][controllername].get_value()==1 %}checked="checked"{% end %}" />
+							id="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' + controllername  }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" value="on" {% if config['ZCONTROLLERS'][controllername].get_value()==1 %}checked="checked"{% end %}" />
 {% elif config['ZCONTROLLERS'][controllername].labels %}
-						<select id="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" >
+						<select id="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' + controllername  }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" >
 {% for item_label in config['ZCONTROLLERS'][controllername].labels %}
 		<option value="{{ item_label }}"  {% if config['ZCONTROLLERS'][controllername].get_value2label()==item_label %}selected="selected"{% end %}>{{ item_label }}</option>
 {% end %}
 						</select>
 {% elif config['ZCONTROLLERS'][controllername].is_integer %}
-						<input type="range" id="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" data-provide="slider"
+						<input type="range" id="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' + controllername }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" data-provide="slider"
 				data-slider-min="{{ config['ZCONTROLLERS'][controllername].value_min }}"
 				data-slider-max="{{ config['ZCONTROLLERS'][controllername].value_max }}"
 				data-slider-step="1"
@@ -60,13 +60,13 @@
 $(document).ready(function() {
 
 	$('#display_zcontroller_panel').click(function(){
-		scMixers = $('#SOUNDCARD_MIXER')[0].value.split();
-
+		scMixers = $('#SOUNDCARD_MIXER')[0].value.split(',');
 		for (idx in scMixers){
-			for (idx2 in $('#ZYNTHIAN_CONTROLLER_VISIBLE_' + scMixers[idx].trim())){
-				$('#ZYNTHIAN_CONTROLLER_VISIBLE_' + scMixers[idx].trim())[idx2].checked = true;
+			console.log(scMixers[idx]);
+			for (idx2 in $('#ZYNTHIAN_CONTROLLER_VISIBLE_' + scMixers[idx].trim().split(' ').join('_'))){
+				console.log($('#ZYNTHIAN_CONTROLLER_VISIBLE_' + scMixers[idx].trim().split(' ').join('_')));
+				$('#ZYNTHIAN_CONTROLLER_VISIBLE_' + scMixers[idx].trim().split(' ').join('_'))[idx2].checked = true;
 			}
-
 		}
 		$('#zcontroller_panel').show(500);
 	});
