@@ -62,9 +62,7 @@ $(document).ready(function() {
 	$('#display_zcontroller_panel').click(function(){
 		scMixers = $('#SOUNDCARD_MIXER')[0].value.split(',');
 		for (idx in scMixers){
-			console.log(scMixers[idx]);
 			for (idx2 in $('#ZYNTHIAN_CONTROLLER_VISIBLE_' + scMixers[idx].trim().split(' ').join('_'))){
-				console.log($('#ZYNTHIAN_CONTROLLER_VISIBLE_' + scMixers[idx].trim().split(' ').join('_')));
 				$('#ZYNTHIAN_CONTROLLER_VISIBLE_' + scMixers[idx].trim().split(' ').join('_'))[idx2].checked = true;
 			}
 		}
