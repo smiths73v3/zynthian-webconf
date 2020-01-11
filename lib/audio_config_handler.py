@@ -226,6 +226,10 @@ class AudioConfigHandler(ZynthianConfigHandler):
 	def post(self):
 		self.request.arguments['ZYNTHIAN_LIMIT_USB_SPEED'] = self.request.arguments.get('ZYNTHIAN_LIMIT_USB_SPEED', '0')
 		postedConfig = tornado.escape.recursive_unicode(self.request.arguments)
+		for k in list(postedConfig):
+			if k.startswith('ZYNTHIAN_CONTROLLER'):
+				del postedConfig[k]
+
 		errors=self.update_config(postedConfig)
 		self.reboot_flag = True
 		self.get(errors)
@@ -241,8 +245,7 @@ class AudioConfigHandler(ZynthianConfigHandler):
 	def get_controllers(self):
 		try:
 			zynthian_engine_mixer.init_zynapi_instance()
-			zynthian_engine_mixer.ctrl_list = []
-			return zynthian_engine_mixer.zynapi_get_controllers()
+			return zynthian_engine_mixer.zynapi_get_controllers('***ALL***')
 		except Exception as err:
 			logging.error(err)
 			return list()
