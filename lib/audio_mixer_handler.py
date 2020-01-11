@@ -109,7 +109,7 @@ class AudioConfigMessageHandler(ZynthianWebSocketMessageHandler):
 	def do_update_audio_mixer(self, zcontroller_name, value):
 		zynthian_engine_mixer.init_zynapi_instance()
 		zynthian_engine_mixer.ctrl_list = []
-		zynthian_controller_list = zynthian_engine_mixer.get_controllers_dict(zcontroller_name)
+		zynthian_controller_list = zynthian_engine_mixer.zynapi_get_controllers(zcontroller_name)
 		if not zynthian_controller_list:
 			logging.debug('Changing value of {} to {}'.format(zcontroller_name, value))
 			zyn_controller = zynthian_controller_list.get(0)
