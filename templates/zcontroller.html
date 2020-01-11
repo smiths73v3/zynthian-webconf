@@ -26,9 +26,9 @@
 {% if config['ZCONTROLLERS'][controllername].is_toggle %} 
 						<input type="checkbox"
 							data-provide="checkbox"
-							id="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" value="on" {% if config['ZCONTROLLERS'][controllername].get_value()==1 %}checked="checked"{% end %}" />
+							id="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0] }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" value="on" {% if config['ZCONTROLLERS'][controllername].get_value()==1 %}checked="checked"{% end %}" />
 {% elif config['ZCONTROLLERS'][controllername].labels %}
-						<select id="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" >
+						<select id="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0] }}" name="ZYNTHIAN_CONTROLLER_VALUE_{{ config['ZCONTROLLERS'][controllername].graph_path[1] + '_' +config['ZCONTROLLERS'][controllername].graph_path[0]  }}" >
 {% for item_label in config['ZCONTROLLERS'][controllername].labels %}
 		<option value="{{ item_label }}"  {% if config['ZCONTROLLERS'][controllername].get_value2label()==item_label %}selected="selected"{% end %}>{{ item_label }}</option>
 {% end %}
@@ -63,8 +63,8 @@ $(document).ready(function() {
 		scMixers = $('#SOUNDCARD_MIXER')[0].value.split();
 
 		for (idx in scMixers){
-			for (idx2 in $('#ZYNTHIAN_CONTROLLER_VISIBLE_' + scMixers[idx].trim())){
-				$('#ZYNTHIAN_CONTROLLER_VISIBLE_' + scMixers[idx].trim())[idx2].checked = true;
+			for (idx2 in $('#ZYNTHIAN_CONTROLLER_VISIBLE_' + scMixers[idx].trim().split(" ").join("_"){
+				$('#ZYNTHIAN_CONTROLLER_VISIBLE_' + scMixers[idx].trim().split(" ").join("_"))[idx2].checked = true;
 			}
 
 		}
