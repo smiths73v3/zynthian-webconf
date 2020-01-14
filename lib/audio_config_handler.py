@@ -156,6 +156,8 @@ class AudioConfigHandler(ZynthianConfigHandler):
 		}]
 	])
 
+	zctrls = None
+
 	@tornado.web.authenticated
 	def get(self, errors=None):
 
@@ -164,8 +166,9 @@ class AudioConfigHandler(ZynthianConfigHandler):
 		else:
 			enable_custom_text = ""
 
-		zc_config=OrderedDict([
-			['ZCONTROLLERS',self.get_controllers()]
+		
+		zc_config = OrderedDict([
+			['ZCONTROLLERS', AudioConfigHandler.get_controllers()]
 		])
 
 		logging.info(zc_config)
@@ -222,6 +225,7 @@ class AudioConfigHandler(ZynthianConfigHandler):
 
 		super().get("Audio", config, errors)
 
+
 	@tornado.web.authenticated
 	def post(self):
 		self.request.arguments['ZYNTHIAN_LIMIT_USB_SPEED'] = self.request.arguments.get('ZYNTHIAN_LIMIT_USB_SPEED', '0')
@@ -234,6 +238,7 @@ class AudioConfigHandler(ZynthianConfigHandler):
 		self.reboot_flag = True
 		self.get(errors)
 
+
 	def get_device_name(self):
 		try:
 			jack_opts=os.environ.get('JACKD_OPTIONS')
@@ -242,10 +247,13 @@ class AudioConfigHandler(ZynthianConfigHandler):
 		except:
 			return "0"
 
-	def get_controllers(self):
+
+	@classmethod
+	def get_controllers(cls):
 		try:
 			zynthian_engine_mixer.init_zynapi_instance()
-			return zynthian_engine_mixer.zynapi_get_controllers("*")
+			AudioConfigHandler.zctrls = zynthian_engine_mixer.zynapi_get_controllers("*")
+			return AudioConfigHandler.zctrls
 		except Exception as err:
 			logging.error(err)
 			return []
