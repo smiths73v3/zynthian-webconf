@@ -245,9 +245,9 @@ class AudioConfigHandler(ZynthianConfigHandler):
 	def get_controllers(self):
 		try:
 			zynthian_engine_mixer.init_zynapi_instance()
-			return zynthian_engine_mixer.zynapi_get_controllers('***ALL***')
+			return zynthian_engine_mixer.zynapi_get_controllers("*")
 		except Exception as err:
 			logging.error(err)
-			return list()
+			return []
 
 
