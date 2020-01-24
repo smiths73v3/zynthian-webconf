@@ -29,6 +29,8 @@ import base64
 import shutil
 import base64
 import logging
+from abc import ABC
+
 import tornado.web
 from collections import OrderedDict
 
@@ -279,16 +281,18 @@ class SnapshotConfigHandler(ZynthianConfigHandler):
 
 		return snapshots
 
-class SnapshotRemoveOptionHandler(tornado.web.RequestHandler):
+
+class SnapshotRemoveOptionHandler(tornado.web.RequestHandler, ABC):
 
 	def get_current_user(self):
 		return self.get_secure_cookie("user")
 
 	@tornado.web.authenticated
-	def post(self, snapshot_file, remove_option_key):
+	def post(self, snapshot_file_b64, remove_option_key):
 		result = {}
 
 		try:
+			snapshot_file = str(base64.b64decode(snapshot_file_b64), 'utf-8')
 			logging.info("Removing option {} in {}".format(remove_option_key, snapshot_file))
 			data = []
 			with open(snapshot_file, "r") as fp:
@@ -309,7 +313,8 @@ class SnapshotRemoveOptionHandler(tornado.web.RequestHandler):
 		if result:
 			self.write(result)
 
-class SnapshotAddOptionsHandler(tornado.web.RequestHandler):
+
+class SnapshotAddOptionsHandler(tornado.web.RequestHandler, ABC):
 	PROFILES_DIRECTORY = "%s/midi-profiles" % os.environ.get("ZYNTHIAN_CONFIG_DIR")
 
 	def get_current_user(self):
@@ -344,6 +349,28 @@ class SnapshotAddOptionsHandler(tornado.web.RequestHandler):
 				json.dump(data, fp)
 
 			result = data
+
+		except Exception as err:
+			result['errors'] = str(err)
+			logging.error(err)
+
+		# JSON Ouput
+		if result:
+			self.write(result)
+
+
+class SnapshotExportPresetHandler(tornado.web.RequestHandler, ABC):
+
+	def get_current_user(self):
+		return self.get_secure_cookie("user")
+
+	@tornado.web.authenticated
+	def post(self, snapshot_file_b64, layer_key):
+		result = {}
+
+		try:
+			snapshot_file = str(base64.b64decode(snapshot_file_b64), 'utf-8')
+			logging.info("TODO: Export preset of {} and layer {}".format(snapshot_file, layer_key))
 
 		except Exception as err:
 			result['errors'] = str(err)

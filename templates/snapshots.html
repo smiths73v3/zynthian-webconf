@@ -68,6 +68,10 @@
 						<thead>
 							<tr>
 								<th data-field="details">Layout</th>
+								<th data-field="layer_key"
+									data-formatter="layoutOperateFormatter"
+									data-events="layoutEvents"
+									>&nbsp;</th>
 							</tr>
 						</thead>
 					</table>
@@ -90,9 +94,9 @@
 								>Options</th>
 								<th data-field="value">&nbsp;</th>
 								<th data-field="key"
-									data-formatter="operateFormatter"
+									data-formatter="midiProfileOperateFormatter"
 									data-events="midiProfileEvents"
-									data-footer-formatter="operateFooterFormatter"
+									data-footer-formatter="midiProfileOperateFooterFormatter"
 									>&nbsp;</th>
 							</tr>
 						</thead>
@@ -133,7 +137,7 @@ $('#zynthian-selection-customized-panel').hide();
 window.midiProfileEvents = {
 	'click .remove-option': function (e, value, row, index) {
 		if (confirm('Do you really want to delete the option ' + value + '?')){
-			$.post("lib-snapshot/remove/" + $("#SEL_FULLPATH")[0].value + "/" + value,
+			$.post("lib-snapshot/remove/" + btoa($("#SEL_FULLPATH")[0].value) + "/" + value,
 				null,
 				function(data, status) {
 					if (status=="success") {
@@ -152,6 +156,30 @@ window.midiProfileEvents = {
 				}
 			);
 		}
+
+	}
+}
+
+window.layoutEvents = {
+	'click .export-preset': function (e, value, row, index) {
+		$.post("lib-snapshot/export-preset/" +  btoa($("#SEL_FULLPATH")[0].value) + "/" + value,
+			null,
+			function(data, status) {
+				if (status=="success") {
+					if (data){
+						if ("errors" in data) {
+							console.log("ExportPreset Error: " + data["errors"])
+						} else {
+							//TODO result as download? or stored on zynthian
+						}
+					}
+				} else {
+					console.log("ExportPreset Response: " + status)
+
+				}
+			}
+		);
+
 
 	}
 }
@@ -232,7 +260,8 @@ function getLayoutData(snapshotDetails){
 			result.push({'channel': layer.midi_chan + 1,
 					'engine_nick': layer.engine_nick,
 					'bank_name': layer.bank_name,
-					'preset_name': layer.preset_name });
+					'preset_name': layer.preset_name,
+					'layer_key': layerKey});
 		}
 	}
 	if (result.length > 0){
@@ -270,7 +299,7 @@ function compare_layer( a, b ) {
   return 0;
 }
 
-function operateFormatter(value, row, index) {
+function midiProfileOperateFormatter(value, row, index) {
     return [
       '<a class="remove-option btn btn-danger btn-block" href="javascript:void(0)" title="Remove">',
       '<i class="fa fa-trash-o"></i>',
@@ -278,7 +307,7 @@ function operateFormatter(value, row, index) {
     ].join('')
 }
 
-function operateFooterFormatter(items) {
+function midiProfileOperateFooterFormatter(items) {
     return [
       '<a class="add-options btn btn-theme btn-block" href="javascript:addMidiOptions()" title="Add">',
       '<i class="fa fa-plus"></i>',
@@ -296,6 +325,14 @@ function selectMidiProfileFormatter(items) {
 	result.push('</select>');
 
 	return result;
+}
+
+function layoutOperateFormatter(value, row, index) {
+    return [
+      '<a class="export-preset btn btn-theme btn-block" href="javascript:void(0)" title="Export Preset">',
+      '<i class="fa fa-share-square-o"></i>',
+      '</a>'
+    ].join('')
 }
 
 </script>
