@@ -23,15 +23,10 @@
 #********************************************************************
 
 import os
-import re
-import json
 import copy
-import uuid
-import urllib3
 import logging
 import shutil
 import requests
-import bz2
 import zipfile
 import tarfile
 import tornado.web
@@ -40,10 +35,10 @@ from collections import OrderedDict
 from lib.zynthian_config_handler import ZynthianConfigHandler
 from zyngui.zynthian_gui_engine import *
 
+
 #------------------------------------------------------------------------------
 # Soundfont Configuration
 #------------------------------------------------------------------------------
-
 class PresetsConfigHandler(ZynthianConfigHandler):
 
 	@tornado.web.authenticated
@@ -54,13 +49,13 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 		config['engine'] = self.get_argument('ENGINE', 'ZY')
 		config['sel_node_id'] = self.get_argument('SEL_NODE_ID', -1)
 		config['musical_artifact_tags'] = self.get_argument('MUSICAL_ARTIFACT_TAGS', '')
+		config['preset_search_term'] = self.get_argument('PRESET_SEARCH_TERM', '')
 		config['ZYNTHIAN_UPLOAD_MULTIPLE'] = True
 
 		if self.genjson:
 			self.write(config)
 		else:
 			self.render("config.html", body="presets.html", config=config, title="Presets & Soundfonts", errors=None)
-
 
 	@tornado.web.authenticated
 	def post(self, action):
@@ -84,17 +79,17 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 				'rename_preset': lambda: self.do_rename_preset(),
 				'download': lambda: self.do_download(),
 				'search': lambda: self.do_search(),
+				'search_presets': lambda: self.do_search_presets(),
 				'install': lambda: self.do_install_url(),
 				'upload': lambda: self.do_install_file()
 			}[action]()
 
-		except:
-			result = {}
+		except Exception as e:
+			result = {'errors': str(e)}
 
 		# JSON Ouput
 		if result:
 			self.write(result)
-
 
 	def do_get_tree(self):
 		result = {}
@@ -102,6 +97,7 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 			result['methods'] =	self.engine_cls.get_zynapi_methods()
 			result['formats'] =	self.get_upload_formats()
 			result['presets'] = self.get_presets_data()
+
 		except Exception as e:
 			result['methods'] =  None
 			result['formats'] =  None
@@ -110,7 +106,6 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 			result['errors'] = "Can't get preset tree data: {}".format(e)
 
 		return result
-
 
 	def do_new_bank(self):
 		result = {}
@@ -123,7 +118,6 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 		result.update(self.do_get_tree())
 		return result
 
-
 	def do_rename_bank(self):
 		result = {}
 		try:
@@ -134,7 +128,6 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 
 		result.update(self.do_get_tree())
 		return result
-
 
 	def do_remove_bank(self):
 		result = {}
@@ -147,7 +140,6 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 		result.update(self.do_get_tree())
 		return result
 
-
 	def do_rename_preset(self):
 		result = {}
 		try:
@@ -159,7 +151,6 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 		result.update(self.do_get_tree())
 		return result
 
-
 	def do_remove_preset(self):
 		result = {}
 		try:
@@ -170,7 +161,6 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 
 		result.update(self.do_get_tree())
 		return result
-
 
 	def do_download(self):
 		result = None
@@ -212,7 +202,6 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 
 		return result
 
-
 	def do_search(self):
 		result = {}
 
@@ -225,6 +214,74 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 
 		return result
 
+	def do_search_presets(self):
+		result = {}
+
+		try:
+			if self.get_argument('PRESET_SEARCH_TERM'):
+				search_term = self.get_argument('PRESET_SEARCH_TERM');
+				result['preset_search_results'] = {}
+				i = 0
+				for engine in zynthian_gui_engine.engine_info:
+					logging.info("ENGINE: {}".format(engine))
+
+					engine_info = zynthian_gui_engine.engine_info[engine]
+					engine_cls = engine_info[3]
+					if hasattr(engine_cls, "zynapi_get_banks"):
+						if engine_cls == zynthian_engine_jalv:
+							engine_cls.init_zynapi_instance(engine_info[0], engine_info[2])
+
+						banks_data = []
+
+						for b in engine_cls.zynapi_get_banks():
+							brow = {
+								'id': i,
+								'text': b['text'],
+								'name': b['name'],
+								'fullpath': b['fullpath'],
+								'readonly': b['readonly'],
+								'node_type': 'BANK',
+								'nodes': [],
+								'icon': "glyphicon glyphicon-link" if b['readonly'] else None,
+							}
+							i += 1
+							try:
+								presets_data = []
+								for p in engine_cls.zynapi_get_presets(b):
+									if search_term in p['name']:
+										prow = {
+											'id': i,
+											'text': p['text'],
+											'name': p['name'],
+											'fullpath': p['fullpath'],
+											'readonly': p['readonly'] or b['readonly'],
+											'bank_fullpath': b['fullpath'],
+											'node_type': 'PRESET',
+											'icon': "glyphicon glyphicon-link" if p['readonly'] else None
+										}
+										i += 1
+										presets_data.append(prow)
+
+								brow['nodes'] = presets_data
+
+							except Exception as e:
+								logging.error("PRESET NODE {} => {}".format(i, e))
+
+							if brow['nodes']:
+								banks_data.append(brow)
+
+						if banks_data:
+							result['preset_search_results'][engine] = banks_data
+
+
+
+			else:
+				result['errors'] = "Please provide a search term!"
+		except OSError as e:
+			logging.error(e)
+			result['errors'] = "Can't search engines: {}".format(e)
+
+		return result
 
 	def do_install_file(self):
 		result = {}
@@ -241,7 +298,6 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 		result.update(self.do_get_tree())
 		return result
 
-
 	def do_install_url(self):
 		result = {}
 
@@ -253,7 +309,6 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 
 		result.update(self.do_get_tree())
 		return result
-
 
 	def search_artifacts(self, formats, tags):
 		result=[]
@@ -278,7 +333,6 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 					row['file'] = None
 
 		return result
-
 
 	def install_file(self, fpath):
 		logging.info("Unpacking '{}' ...".format(fpath))
@@ -318,7 +372,6 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 			shutil.rmtree(dpath, ignore_errors=True)
 			pass
 
-
 	def install_url(self, url):
 		logging.info("Downloading '{}' ...".format(url))
 		res = requests.get(url, verify=False)
@@ -329,7 +382,6 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 			df.close()
 			self.install_file(fpath)
 
-
 	def get_engine_info(self):
 		engine_info = copy.copy(zynthian_gui_engine.engine_info)
 		for e in zynthian_gui_engine.engine_info:
@@ -337,13 +389,11 @@ class PresetsConfigHandler(ZynthianConfigHandler):
 				del engine_info[e]
 		return engine_info
 
-
 	def get_upload_formats(self):
 		try:
 			return self.engine_cls.zynapi_get_formats()
 		except:
 			return ""
-
 
 	def get_presets_data(self):
 		try:

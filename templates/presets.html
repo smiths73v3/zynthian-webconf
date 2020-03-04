@@ -109,6 +109,17 @@
 						<span id="loading-action-search" style="display:none;"><img src="/img/loading.gif"></span>
 					</div>
 				</div>
+
+				<label for="PRESET_SEARCH_TERM">Search Presets:</label>
+				<div class="row no-gutters">
+					<div class="col-xs-11">
+						<input type="text" id="PRESET_SEARCH_TERM" name="PRESET_SEARCH_TERM" value="{{ escape(config['preset_search_term']) }}" />
+					</div>
+					<div class="col-xs-1 text-center">
+						<button id="button-search_presets" class="btn btn-theme btn-block" onclick="return do_action('search_presets')" title="Search"><i class="fa fa-search"></i></button>
+						<span id="loading-action-search_presets" style="display:none;"><img src="/img/loading.gif"></span>
+					</div>
+				</div>
 				<div class="row" id="presets-search-result" style="display:none"></div>
 			</div>
 
@@ -153,7 +164,7 @@ $(document).ready(function () {
 	connectZynthianWebSocket(deferred);
 
 	$('#upload_panel')[0].onuploadend = function(response){
-		console.log("Upload succeded: " + response)
+		console.log("Upload succeeded: " + response)
 		$("#INSTALL_FPATH").val(response)
 		do_action("upload")
 	}
@@ -243,6 +254,9 @@ function do_action(action=null, xid=null) {
 				if ("search_results" in data) {
 					renderSearchResults(data['search_results'])
 				}
+				if ("preset_search_results" in data){
+					renderPresetSearchResults(data['preset_search_results'])
+				}
 			} else {
 				$("#error-message-action").html("Can't do " + action + ": " + status)
 				$("#error-message-action").show(600)
@@ -303,8 +317,10 @@ function renderPresetsTree(data) {
 
 	var node_id = parseInt($("#SEL_NODE_ID").val())
 	$('#presets-tree').treeview('collapseAll', { silent: true });
-	$('#presets-tree').treeview('revealNode', [ node_id, { silent: true } ]);
-	$('#presets-tree').treeview('selectNode', node_id);
+	if (node_id >= 0) {
+		$('#presets-tree').treeview('revealNode', [ node_id, { silent: true } ]);
+		$('#presets-tree').treeview('selectNode', node_id);
+	}
 }
 
 function renderSearchResults(data) {
@@ -328,6 +344,31 @@ function renderSearchResults(data) {
 		}
 		html += "</div>\n"
 		html += "</div>"
+	}
+	html += "</div>"
+
+	$("#presets-search-result").html(html)
+	$("#presets-search-result").show()
+}
+
+function renderPresetSearchResults(data) {
+	html = "<div class='col-md-12 col-sm-12'>\n"
+	for (engine in data){
+		for (bankIdx in data[engine]){
+			bank = data[engine][bankIdx];
+			for (presetIdx in bank.nodes){
+				preset = bank.nodes[presetIdx];
+				html += "<div class='row'>";
+				html += "<div class='col-md-10 col-sm-10 font-weight-bold'><b>" + engine + "&gt;"
+				html += bank.text;
+				html += "/";
+				html += preset.text;
+				html +="</b></div>";
+				//TODO <action></action>
+				html += "</div>"
+			}
+
+		}
 	}
 	html += "</div>"
 
