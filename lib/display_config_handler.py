@@ -250,6 +250,11 @@ class DisplayConfigHandler(ZynthianConfigHandler):
 			'DISPLAY_WIDTH': '',
 			'DISPLAY_HEIGHT': '',
 			'FRAMEBUFFER': '/dev/fb0'
+		['MHS35 480x320', {
+			'DISPLAY_CONFIG': 'dtoverlay=mhs35,rotate=90',
+			'DISPLAY_WIDTH': '480',
+			'DISPLAY_HEIGHT': '320',
+			'FRAMEBUFFER': '/dev/fb1'
 		}],
 		['Generic HDMI Display', {
 			'DISPLAY_CONFIG': 'disable_overscan=1\n',

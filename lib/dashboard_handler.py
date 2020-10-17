@@ -27,7 +27,7 @@ import re
 import sys
 import logging
 import tornado.web
-from subprocess import check_output
+from subprocess import check_output, DEVNULL
 from distutils import util
 from collections import OrderedDict
 from lib.zynthian_config_handler import ZynthianBasicHandler
@@ -231,6 +231,14 @@ class DashboardHandler(ZynthianBasicHandler):
 			}]
 		])
 
+		media_usb0_info = self.get_media_info('/media/usb0')
+		if media_usb0_info:
+			config['SYSTEM']['info']['MEDIA_USB0'] = {
+				'title': "USB Storage",
+				'value': "{} ({}/{})".format(media_usb0_info['usage'],media_usb0_info['used'],media_usb0_info['total']),
+				'url': "/lib-captures"
+			}
+
 		if self.is_service_active("touchosc2midi"):
 			config['NETWORK']['info']['TOUCHOSC'] = {
 				'title': 'TouchOSC',
@@ -312,13 +320,29 @@ class DashboardHandler(ZynthianBasicHandler):
 			return "???"
 
 
-	def get_sd_info(self):
+	def get_volume_info(self, volume='/dev/root'):
 		try:
-			out=check_output("df -h / | grep '/dev/root'", shell=True).decode()
+			out=check_output("df -h | grep '{}'".format(volume), shell=True).decode()
 			parts=re.split('\s+', out)
 			return { 'total': parts[1], 'used': parts[2], 'free': parts[3], 'usage': parts[4] }
 		except:
 			return { 'total': 'NA', 'used': 'NA', 'free': 'NA', 'usage': 'NA' }
+
+
+	def get_sd_info(self):
+		return self.get_volume_info('/dev/root')
+
+
+	def get_media_info(self, mpath="/media/usb0"):
+		try:
+			out=check_output("mountpoint '{}'".format(mpath), shell=True).decode()
+			if out.startswith("{} is a mountpoint".format(mpath)):
+				return self.get_volume_info(mpath)
+			else:
+				return None
+		except Exception as e:
+			#logging.error("Can't get info for '{}' => {}".format(mpath,e))
+			pass
 
 
 	def get_num_of_files(self, path, pattern=None):
@@ -338,7 +362,7 @@ class DashboardHandler(ZynthianBasicHandler):
 		n2 = int(check_output("find {}/pianoteq -type f -prune | wc -l".format(path), shell=True).decode())
 		logging.debug("Pianoteq presets => {}".format(n2))
 		# Puredata presets
-		n3 = int(check_output("find {}/puredata/*/* -type d -prune | wc -l".format(path), shell=True).decode())
+		n3 = int(check_output("find {}/puredata/*/* -type d -prune | wc -l".format(path), shell=True, stderr=DEVNULL).decode())
 		logging.debug("Puredata presets => {}".format(n3))
 		# ZynAddSubFX presets
 		n4 = int(check_output("find {}/zynaddsubfx -type f -name *.xiz | wc -l".format(path), shell=True).decode())

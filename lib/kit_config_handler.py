@@ -30,7 +30,7 @@ from collections import OrderedDict
 from subprocess import check_output, call
 
 from lib.zynthian_config_handler import ZynthianConfigHandler
-from lib.audio_config_handler import AudioConfigHandler
+from lib.audio_config_handler import soundcard_presets
 from lib.display_config_handler import DisplayConfigHandler
 from lib.wiring_config_handler import WiringConfigHandler
 
@@ -42,6 +42,7 @@ class KitConfigHandler(ZynthianConfigHandler):
 
 	kit_options = [
 		'EPDF',
+		'V4',
 		'V3-PRO',
 		'V3',
 		'V2+',
@@ -81,7 +82,7 @@ class KitConfigHandler(ZynthianConfigHandler):
 	def configure_kit(self, pconfig):
 		kit_version = pconfig['ZYNTHIAN_KIT_VERSION'][0]
 		if kit_version!="Custom":
-			if kit_version=="V3-PRO":
+			if kit_version in ("V4", "V3-PRO"):
 				soundcard_name = "HifiBerry DAC+ ADC PRO"
 				display_name = "ZynScreen 3.5 (v1)"
 				wiring_layout = "MCP23017_ZynScreen"
@@ -107,7 +108,7 @@ class KitConfigHandler(ZynthianConfigHandler):
 				wiring_layout = "MCP23017_EPDF"
 
 			pconfig['SOUNDCARD_NAME']=[soundcard_name]
-			for k,v in AudioConfigHandler.soundcard_presets[soundcard_name].items():
+			for k,v in soundcard_presets[soundcard_name].items():
 				pconfig[k]=[v]
 
 			pconfig['DISPLAY_NAME']=[display_name]
