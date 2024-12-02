@@ -112,7 +112,8 @@ class RepositoryHandler(ZynthianConfigHandler):
                 'type': 'html',
                 'content': "<div class='alert alert-success'>Some repo changed its branch. You may want to <a href='/sw-update'>update the software</a> for getting the latest changes.</div>"
             }
-            # self.reboot_flag = True
+            self.restart_ui_flag = True
+            self.restart_webconf_flag = True
 
         super().get("Repositories", config, errors)
 
@@ -171,8 +172,8 @@ class RepositoryHandler(ZynthianConfigHandler):
         result = []
         repo_dir = self.zynthian_base_dir + "/" + repo_name
         check_output(f"git -C '{repo_dir}' remote update origin --prune", shell=True)
-        for byteLine in check_output(f"git -C '{repo_dir}' tag -l {filter}*", shell=True).splitlines():
-            result.append(byteLine.decode("utf-8").strip())
+        for bline in check_output(f"git -C '{repo_dir}' tag -l {filter}*", shell=True).splitlines():
+            result.append(bline.decode("utf-8").strip())
         result.sort()
         return result
 
@@ -180,8 +181,8 @@ class RepositoryHandler(ZynthianConfigHandler):
         result = []
         repo_dir = self.zynthian_base_dir + "/" + repo_name
         check_output(f"git -C '{repo_dir}' remote update origin --prune", shell=True)
-        for byteLine in check_output(f"git -C '{repo_dir}' branch -a", shell=True).splitlines():
-            bname = byteLine.decode("utf-8").strip()
+        for bline in check_output(f"git -C '{repo_dir}' branch -a", shell=True).splitlines():
+            bname = bline.decode("utf-8").strip()
             if bname.startswith("*"):
                 bname = bname[2:]
             if bname.startswith("remotes/origin/"):
@@ -195,9 +196,8 @@ class RepositoryHandler(ZynthianConfigHandler):
 
     def get_repo_current_branch(self, repo_name):
         repo_dir = self.zynthian_base_dir + "/" + repo_name
-        for byteLine in check_output(f"git -C '{repo_dir}' branch | grep \* | cut -d ' ' -f2",
-                                    shell=True).splitlines():
-            return byteLine.decode("utf-8")
+        for bline in check_output(f"git -C '{repo_dir}' branch | grep \* | cut -d ' ' -f2", shell=True).splitlines():
+            return bline.decode("utf-8")
 
     def set_repo_tag(self, repo_name, tag_name):
         logging.info(f"Changing repository '{repo_name}' to tag '{tag_name}'")
@@ -206,7 +206,7 @@ class RepositoryHandler(ZynthianConfigHandler):
         if tag_name != current_branch:
             logging.info(f"... needs change: '{current_branch}' != '{tag_name}'")
             check_output(
-                f"cd {repo_dir}; git checkout .; git branch -D {tag_name}; git checkout tags/{tag_name} -b {tag_name}",
+               f"cd {repo_dir}; git checkout .; git branch -D {tag_name}; git checkout tags/{tag_name} -b {tag_name}",
                shell=True)
             return True
 
