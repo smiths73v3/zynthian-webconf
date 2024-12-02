@@ -47,14 +47,17 @@ class UiConfigHandler(ZynthianConfigHandler):
     @tornado.web.authenticated
     def get(self, errors=None):
 
+        touch_navigation = os.environ.get('ZYNTHIAN_UI_TOUCH_NAVIGATION2', '_UNDEF_')
+
         # Backward compatibility
-        touch_navigation = os.environ.get('ZYNTHIAN_UI_TOUCH_NAVIGATION', '')
-        if touch_navigation == "1":
-            touch_navigation = "touch_widgets"
-        elif touch_navigation == "0":
-            touch_keypad = os.environ.get('ZYNTHIAN_TOUCH_KEYPAD', '')
-            if touch_keypad == "V5":
-                touch_navigation = "v5_keypad_left"
+        if touch_navigation == "_UNDEF_":
+            touch_navigation = os.environ.get('ZYNTHIAN_UI_TOUCH_NAVIGATION', '')
+            if touch_navigation == "1":
+                touch_navigation = "touch_widgets"
+            elif touch_navigation == "0":
+                touch_keypad = os.environ.get('ZYNTHIAN_TOUCH_KEYPAD', '')
+                if touch_keypad == "V5":
+                    touch_navigation = "v5_keypad_left"
 
         config = OrderedDict([
             ['ZYNTHIAN_UI_POWER_SAVE_MINUTES', {
@@ -93,7 +96,7 @@ class UiConfigHandler(ZynthianConfigHandler):
                 },
                 'advanced': True
             }],
-            ['ZYNTHIAN_UI_TOUCH_NAVIGATION', {
+            ['ZYNTHIAN_UI_TOUCH_NAVIGATION2', {
                 'type': 'select',
                 'title': 'Touch Navigation',
                 'value': touch_navigation,
