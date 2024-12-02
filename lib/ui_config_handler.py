@@ -46,6 +46,16 @@ class UiConfigHandler(ZynthianConfigHandler):
 
     @tornado.web.authenticated
     def get(self, errors=None):
+
+        # Backward compatibility
+        touch_navigation = os.environ.get('ZYNTHIAN_UI_TOUCH_NAVIGATION', '')
+        if touch_navigation == "1":
+            touch_navigation = "touch_widgets"
+        elif touch_navigation == "0":
+            touch_keypad = os.environ.get('ZYNTHIAN_TOUCH_KEYPAD', '')
+            if touch_keypad == "V5":
+                touch_navigation = "v5_keypad_left"
+
         config = OrderedDict([
             ['ZYNTHIAN_UI_POWER_SAVE_MINUTES', {
                 'type': 'text',
@@ -83,32 +93,17 @@ class UiConfigHandler(ZynthianConfigHandler):
                 },
                 'advanced': True
             }],
-            ['ZYNTHIAN_TOUCH_KEYPAD', {
+            ['ZYNTHIAN_UI_TOUCH_NAVIGATION', {
                 'type': 'select',
-                'title': 'Touch-keypad',
-                'value':  os.environ.get('ZYNTHIAN_TOUCH_KEYPAD', ''),
-                'options': ['', 'V5'],
+                'title': 'Touch Navigation',
+                'value': touch_navigation,
+                'options': ['', 'touch_widgets', 'v5_keypad_left', 'v5_keypad_right'],
                 'option_labels': {
                     '': 'None',
-                    'V5': 'V5 buttons',
+                    'touch_widgets': 'Touch-widgets',
+                    'v5_keypad_left': 'V5 keypad at left',
+                    'v5_keypad_right': 'V5 keypad at right'
                 },
-            }],
-            ['ZYNTHIAN_TOUCH_KEYPAD_SIDE_LEFT', {
-                'type': 'select',
-                'title': 'Touch-keypad position',
-                'value': os.environ.get('ZYNTHIAN_TOUCH_KEYPAD_SIDE_LEFT', '1'),
-                'options': ['0', '1'],
-                'option_labels': {
-                    '0': 'Left Side',
-                    '1': 'Right Side'
-                },
-                'advanced': True
-            }],
-            ['ZYNTHIAN_UI_TOUCH_NAVIGATION', {
-                'type': 'boolean',
-                'title': 'Touch navigation',
-                'value': os.environ.get('ZYNTHIAN_UI_TOUCH_NAVIGATION', '0'),
-                'advanced': True
             }],
             ['ZYNTHIAN_UI_ENABLE_CURSOR', {
                 'type': 'boolean',
