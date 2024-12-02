@@ -206,7 +206,7 @@ class RepositoryHandler(ZynthianConfigHandler):
         if tag_name != current_branch:
             logging.info(f"... needs change: '{current_branch}' != '{tag_name}'")
             check_output(
-               f"cd {repo_dir}; git checkout .; git branch -D {tag_name}; git checkout tags/{tag_name} -b {tag_name}",
+               f"cd {repo_dir}; git checkout .; git clean -f; git branch -D {tag_name}; git checkout tags/{tag_name} -b {tag_name}; git pull",
                shell=True)
             return True
 
@@ -216,7 +216,7 @@ class RepositoryHandler(ZynthianConfigHandler):
         current_branch = self.get_repo_current_branch(repo_name)
         if branch_name != current_branch:
             logging.info(f"... needs change: '{current_branch}' != '{branch_name}'")
-            check_output(f"cd {repo_dir}; git checkout .; git checkout {branch_name}", shell=True)
+            check_output(f"cd {repo_dir}; git checkout .; git clean -f; git checkout {branch_name}; git pull", shell=True)
             return True
 
 # -----------------------------------------------------------------------------
