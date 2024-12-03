@@ -370,7 +370,7 @@ class WiringConfigHandler(ZynthianConfigHandler):
         "DUMMIES": {
             'ZYNTHIAN_WIRING_ENCODER_A': "-1,-1,-1,-1",
             'ZYNTHIAN_WIRING_ENCODER_B': "-1,-1,-1,-1",
-            'ZYNTHIAN_WIRING_SWITCHES': "-1,-1,-1,-1",
+            'ZYNTHIAN_WIRING_SWITCHES': "-1,-1,-1,-1,-1,-1,-1,-1",
             'ZYNTHIAN_WIRING_MCP23017_INTA_PIN': "",
             'ZYNTHIAN_WIRING_MCP23017_INTB_PIN': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
