@@ -339,38 +339,25 @@ class WiringConfigHandler(ZynthianConfigHandler):
         "PROTOTYPE-1": {
             'ZYNTHIAN_WIRING_ENCODER_A': "27,21,3,7",
             'ZYNTHIAN_WIRING_ENCODER_B': "25,26,4,0",
-            'ZYNTHIAN_WIRING_SWITCHES': "23,None,2,None",
+            'ZYNTHIAN_WIRING_SWITCHES': "23,-1,2,-1",
             'ZYNTHIAN_WIRING_MCP23017_INTA_PIN': "",
             'ZYNTHIAN_WIRING_MCP23017_INTB_PIN': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
             'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
         },
-        "I2C_HWC": {
-            'ZYNTHIAN_WIRING_ENCODER_A': "1,2,3,4",
-            'ZYNTHIAN_WIRING_ENCODER_B': "0,0,0,0",
-            'ZYNTHIAN_WIRING_SWITCHES': "1,2,3,4",
-            'ZYNTHIAN_WIRING_MCP23017_INTA_PIN': "7",
-            'ZYNTHIAN_WIRING_MCP23017_INTB_PIN': "0",
-            'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
-            'ZYNTHIAN_WIRING_ZYNAPTIK_ADS1115_I2C_ADDRESS': "",
-            'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': "",
-            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
-        },
-        "EMULATOR": {
-            'ZYNTHIAN_WIRING_ENCODER_A': "4,5,6,7",
-            'ZYNTHIAN_WIRING_ENCODER_B': "8,9,10,11",
-            'ZYNTHIAN_WIRING_SWITCHES': "0,1,2,3",
+        "RBPI_GPIO": {
+            'ZYNTHIAN_WIRING_ENCODER_A': "27,21,3,7",
+            'ZYNTHIAN_WIRING_ENCODER_B': "25,26,4,0",
+            'ZYNTHIAN_WIRING_SWITCHES': "23,10,2,11",
             'ZYNTHIAN_WIRING_MCP23017_INTA_PIN': "",
             'ZYNTHIAN_WIRING_MCP23017_INTB_PIN': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
-            'ZYNTHIAN_WIRING_ZYNAPTIK_ADS1115_I2C_ADDRESS': "",
-            'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': "",
             'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
         },
-        "DUMMIES": {
+        "TOUCH_ONLY": {
             'ZYNTHIAN_WIRING_ENCODER_A': "-1,-1,-1,-1",
             'ZYNTHIAN_WIRING_ENCODER_B': "-1,-1,-1,-1",
-            'ZYNTHIAN_WIRING_SWITCHES': "-1,-1,-1,-1,-1,-1,-1,-1",
+            'ZYNTHIAN_WIRING_SWITCHES': "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1",
             'ZYNTHIAN_WIRING_MCP23017_INTA_PIN': "",
             'ZYNTHIAN_WIRING_MCP23017_INTB_PIN': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
@@ -455,12 +442,18 @@ class WiringConfigHandler(ZynthianConfigHandler):
             zyntof_config_flag = False
             n_extra_switches = 24
         else:
-            encoders_config_flag = True
             if wiring_layout.startswith("MCP23017") or wiring_layout == "CUSTOM":
+                encoders_config_flag = True
                 mcp23017_config_flag = True
                 zynaptik_config_flag = True
                 zyntof_config_flag = True
+            elif wiring_layout == "TOUCH_ONLY":
+                encoders_config_flag = False
+                mcp23017_config_flag = False
+                zynaptik_config_flag = False
+                zyntof_config_flag = False
             else:
+                encoders_config_flag = True
                 mcp23017_config_flag = False
                 zynaptik_config_flag = False
                 zyntof_config_flag = False
