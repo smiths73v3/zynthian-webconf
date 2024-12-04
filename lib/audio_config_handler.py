@@ -59,6 +59,11 @@ soundcard_presets = {
         'JACKD_OPTIONS': f"-P 70 -s -S -d alsa -d hw:sndrpihifiberry {default_i2s_bufreq_config} -o 2 -i 2 -X raw",
         'SOUNDCARD_MIXER': 'Digital Left,PGA Gain Left,Digital Right,PGA Gain Right,ADC Left Input,ADC Left,ADC Right Input,ADC Right'
     },
+    'ZynAudio8x': {
+        'SOUNDCARD_CONFIG': 'dtoverlay=zynaudio8x,inputs=8,outputs=8',
+        'JACKD_OPTIONS': f"-P 70 -s -S -d alsa -d hw:zynaudio8x {default_i2s_bufreq_config} -X raw",
+        'SOUNDCARD_MIXER': ''
+    },
     'HifiBerry DAC8X': {
         'SOUNDCARD_CONFIG': 'dtoverlay=hifiberry-dac8x\nforce_eeprom_read=0',
         'JACKD_OPTIONS': f"-P 70 -s -S -d alsa -d hw:sndrpihifiberry -r 48000 -p 256 -n 2 -o 8 -X raw",
@@ -255,6 +260,9 @@ soundcard_presets = {
         'SOUNDCARD_MIXER': ''
     }
 }
+
+if rpi_version_number != 5:
+    del soundcard_presets["ZynAudio8x"]
 
 try:
     zynthian_engine_alsa_mixer.init_zynapi_instance()
