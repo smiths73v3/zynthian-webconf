@@ -209,20 +209,25 @@ soundcard_presets = {
         'JACKD_OPTIONS': '-P 70 -s -d alsa -d hw:Alpha -r 48000 -p 256 -n 2 -X raw',
         'SOUNDCARD_MIXER': ''
     },
-    'M-Audio M-Track Plus 2': {
-        'SOUNDCARD_CONFIG': '',
-        'JACKD_OPTIONS': '-P 70 -s -d alsa -d hw:Plus -r 48000 -p 256 -n 2 -X raw',
-        'SOUNDCARD_MIXER': 'Mic Left,Mic Right,M-Audio M-Track Plus Left,M-Audio M-Track Plus Right'
-    },
     'LogicLink UA0099': {
         'SOUNDCARD_CONFIG': '',
         'JACKD_OPTIONS': '-P 70 -s -d alsa -d hw:ICUSBAUDIO7D -r 48000 -p 256 -n 2 -X raw',
         'SOUNDCARD_MIXER': ''
     },
+    'M-Audio M-Track Plus 2': {
+        'SOUNDCARD_CONFIG': '',
+        'JACKD_OPTIONS': '-P 70 -s -d alsa -d hw:Plus -r 48000 -p 256 -n 2 -X raw',
+        'SOUNDCARD_MIXER': 'Mic Left,Mic Right,M-Audio M-Track Plus Left,M-Audio M-Track Plus Right'
+    },
     'Steinberg UR22 MKII': {
         'SOUNDCARD_CONFIG': '',
         'JACKD_OPTIONS': '-P 70 -s -d alsa -d hw:UR22mkII -r 48000 -p 256 -n 2 -X raw',
         'SOUNDCARD_MIXER': 'Clock_Source_41_Validity'
+    },
+    'Tascam US-2x2HR': {
+        'SOUNDCARD_CONFIG': '',
+        'JACKD_OPTIONS': '-P 70 -t 2000 -s -d alsa -d hw:US2x2HR -r 48000 -p 256 -n 2 -X raw',
+        'SOUNDCARD_MIXER': ''
     },
     'Tascam US-16x08': {
         'SOUNDCARD_CONFIG': '',
@@ -238,11 +243,6 @@ soundcard_presets = {
         'SOUNDCARD_CONFIG': '',
         'JACKD_OPTIONS': '-P 70 -s -d alsa -d hw:Microphone -r 48000 -p 256 -n 2 -X raw',
         'SOUNDCARD_MIXER': 'Speaker Left,Mic Left,Speaker Right,Mic Right'
-    },
-    'Tascam US-2x2HR': {
-        'SOUNDCARD_CONFIG': '',
-        'JACKD_OPTIONS': '-P 70 -t 2000 -s -d alsa -d hw:US2x2HR -r 48000 -p 256 -n 2 -X raw',
-        'SOUNDCARD_MIXER': ''
     },
     'RBPi Headphones': {
         'SOUNDCARD_CONFIG': 'dtparam=audio=on\naudio_pwm_mode=2',
