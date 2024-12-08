@@ -4,7 +4,7 @@
 #
 # Audio Configuration Handler
 #
-# Copyright (C) 2017 Fernando Moyano <jofemodo@zynthian.org>
+# Copyright (C) 2017-2024 Fernando Moyano <jofemodo@zynthian.org>
 #
 # ********************************************************************
 #
@@ -24,6 +24,8 @@
 
 import os
 import copy
+import re
+import alsaaudio
 import logging
 import tornado.web
 from lib.zynthian_config_handler import ZynthianConfigHandler
@@ -56,6 +58,11 @@ soundcard_presets = {
         'SOUNDCARD_CONFIG': 'dtoverlay=hifiberry-dacplusadcpro\nforce_eeprom_read=0',
         'JACKD_OPTIONS': f"-P 70 -s -S -d alsa -d hw:sndrpihifiberry {default_i2s_bufreq_config} -o 2 -i 2 -X raw",
         'SOUNDCARD_MIXER': 'Digital Left,PGA Gain Left,Digital Right,PGA Gain Right,ADC Left Input,ADC Left,ADC Right Input,ADC Right'
+    },
+    'ZynAudio8x': {
+        'SOUNDCARD_CONFIG': 'dtoverlay=zynaudio8x,inputs=8,outputs=8',
+        'JACKD_OPTIONS': f"-P 70 -s -S -d alsa -d hw:zynaudio8x {default_i2s_bufreq_config} -X raw",
+        'SOUNDCARD_MIXER': ''
     },
     'HifiBerry DAC8X': {
         'SOUNDCARD_CONFIG': 'dtoverlay=hifiberry-dac8x\nforce_eeprom_read=0',
@@ -232,6 +239,11 @@ soundcard_presets = {
         'JACKD_OPTIONS': '-P 70 -s -d alsa -d hw:Microphone -r 48000 -p 256 -n 2 -X raw',
         'SOUNDCARD_MIXER': 'Speaker Left,Mic Left,Speaker Right,Mic Right'
     },
+    'Tascam US-2x2HR': {
+        'SOUNDCARD_CONFIG': '',
+        'JACKD_OPTIONS': '-P 70 -t 2000 -s -d alsa -d hw:US2x2HR -r 48000 -p 256 -n 2 -X raw',
+        'SOUNDCARD_MIXER': ''
+    },
     'RBPi Headphones': {
         'SOUNDCARD_CONFIG': 'dtparam=audio=on\naudio_pwm_mode=2',
         'JACKD_OPTIONS': '-P 70 -s -d alsa -d hw:#DEVNAME# -r 48000 -p 512 -n 3 -o 2 -X raw',
@@ -253,6 +265,9 @@ soundcard_presets = {
         'SOUNDCARD_MIXER': ''
     }
 }
+
+if rpi_version_number != 5:
+    del soundcard_presets["ZynAudio8x"]
 
 try:
     zynthian_engine_alsa_mixer.init_zynapi_instance()
@@ -295,6 +310,29 @@ class AudioConfigHandler(ZynthianConfigHandler):
 
         config = {}
 
+        try:
+            jackd_options = os.environ.get('JACKD_OPTIONS', "-P 70 -t 2000 -s -d alsa -d hw:0 -r 48000 -p 256 -n 2")
+            alsa_config = re.split('-d\salsa', jackd_options)[1] + " "
+            val = re.search(r"-d\s*(\S*)", alsa_config)
+            device = "hw:0" if val is None else val.group(1)[3:]
+            val = re.search(r"-r\s*(\S*)", alsa_config)
+            samplerate = "48000" if val is None else val.group(1)
+            val = re.search(r"-p\s*(\S*)", alsa_config)
+            num_frames = "1024" if val is None else val.group(1)
+            val = re.search(r"-n\s*(\S*)", alsa_config)
+            num_periods = "2" if val is None else val.group(1)
+            mode_soft = "1" if " -s" in alsa_config else "0"
+            mode_16 = "1" if " -S" in alsa_config else "0"
+            latency = 1000 * int(num_periods) * int(num_frames) / int(samplerate)
+        except Exception as e:
+            logging.error(f"Bad jack configuration {e}")
+        device_list = []
+        for pcm in alsaaudio.pcms():
+            if pcm.startswith("hw:CARD=") and not pcm.startswith("hw:CARD=b1"):
+                device_list.append(pcm[8:].split(',')[0])
+        if device not in device_list:
+            device_list.insert(0, f"{device} (Not detected)")
+
         if os.environ.get('ZYNTHIAN_KIT_VERSION') != 'Custom':
             custom_options_disabled = True
             config['ZYNTHIAN_MESSAGE'] = {
@@ -330,10 +368,54 @@ class AudioConfigHandler(ZynthianConfigHandler):
             'advanced': True,
             'disabled': custom_options_disabled
         }
+        config['ALSA_DEVICE'] = {
+            'type': 'select',
+            'title': "Soundcard Device",
+            'value': device,
+            'options': device_list,
+            'refresh_on_change': True
+        }
+        config['_PARAM_WARNING_'] = {
+            'type': 'html',
+            'content': f"<br><div class='alert alert-warning'>Software latency: {latency:0.1f}ms. (Actual latency may be higher due to soundcard hardware.)<br>Note: Some parameter values do not work on some soundcards.</div>"
+        }
+        config['ALSA_SAMPLERATE'] = {
+            'type': 'select',
+            'title': "Samplerate",
+            'value': str(samplerate),
+            'options': ['32000', '44100', '48000', '96000'],
+            'refresh_on_change': True
+        }
+        config['ALSA_NUM_FRAMES'] = {
+            'type': 'select',
+            'title': "Buffer Size",
+            'value': str(num_frames),
+            'options': ['64', '128', '256', '512', '1024', '2048'],
+            'refresh_on_change': True
+        }
+        config['ALSA_NUM_PERIODS'] = {
+            'type': 'select',
+            'title': "Number of Buffers",
+            'value': str(num_periods),
+            'options': ['2', '3'],
+            'refresh_on_change': True
+        }
+        config['ALSA_MODE_16'] = {
+            'type': 'boolean',
+            'title': '16-bit mode',
+            'value': mode_16,
+            'refresh_on_change': True
+        }
+        config['ALSA_MODE_SOFT'] = {
+            'type': 'boolean',
+            'title': 'Soft x-run mode',
+            'value': mode_soft,
+            'refresh_on_change': True
+        }
         config['JACKD_OPTIONS'] = {
             'type': 'text',
             'title': "Jackd Options",
-            'value': os.environ.get('JACKD_OPTIONS', "-P 70 -t 2000 -s -d alsa -d hw:0 -r 48000 -p 256 -n 2"),
+            'value': jackd_options,
             'advanced': True,
             'disabled': custom_options_disabled
         }
@@ -377,10 +459,59 @@ class AudioConfigHandler(ZynthianConfigHandler):
 
     @tornado.web.authenticated
     def post(self):
+        command = self.get_argument('_command', '')
+        logging.info("COMMAND = {}".format(command))
+
         self.request.arguments['ZYNTHIAN_DISABLE_RBPI_AUDIO'] = self.request.arguments.get(
             'ZYNTHIAN_DISABLE_RBPI_AUDIO', '0')
         self.request.arguments['ZYNTHIAN_RBPI_HEADPHONES'] = self.request.arguments.get(
             'ZYNTHIAN_RBPI_HEADPHONES', '0')
+
+        try:
+            changed = self.request.arguments['_changed'][0].decode()
+            if changed.startswith("ALSA") or command == "SAVE":
+                jackd_options = self.get_argument('JACKD_OPTIONS', os.environ.get('JACKD_OPTIONS', "-P 70 -t 2000 -s -d alsa -d hw:0 -r 48000 -p 256 -n 2"))
+                jack_config, alsa_config = re.split('-d\salsa', jackd_options)
+                val =  self.get_argument('ALSA_DEVICE')
+                if val.endswith(" (Not detected)"):
+                    val = val[:-15]
+                match = re.search(r"-d\s*(\S*)", alsa_config)
+                if match is None:
+                    alsa_config += f" -d hw{val}"
+                else:
+                    alsa_config = alsa_config.replace(match.group(0), f"-d hw:{val}")
+                val = self.get_argument('ALSA_SAMPLERATE')
+                match = re.search(r"-r\s*(\S*)", alsa_config)
+                if match is None:
+                    alsa_config += f" -r {val}"
+                else:
+                    alsa_config = alsa_config.replace(match.group(0), f"-r {val}")
+                val = self.get_argument('ALSA_NUM_FRAMES')
+                match = re.search(r"-p\s*(\S*)", alsa_config)
+                if match is None:
+                    alsa_config += f" -p {val}"
+                else:
+                    alsa_config = alsa_config.replace(match.group(0), f"-p {val}")
+                val = self.get_argument('ALSA_NUM_PERIODS')
+                match = re.search(r"-n\s*(\S*)", alsa_config)
+                if match is None:
+                    alsa_config += f" -n {val}"
+                else:
+                    alsa_config = alsa_config.replace(match.group(0), f"-n {val}")
+                if self.get_argument("ALSA_MODE_16", "0") == "0":
+                    alsa_config = alsa_config.replace(" -S", " ")
+                elif " -S" not in alsa_config:
+                    alsa_config += " -S"
+                if self.get_argument("ALSA_MODE_SOFT", "0") == "0":
+                    alsa_config = alsa_config.replace(" -s", " ")
+                elif " -s" not in alsa_config:
+                    alsa_config += " -s"
+
+                jackd_options = f"{jack_config}-d alsa{alsa_config}"
+                self.request.arguments["JACKD_OPTIONS"] = [jackd_options.encode('utf-8')]
+        except Exception as e:
+            logging.error(e)
+
         try:
             previous_soundcard = os.environ.get('SOUNDCARD_NAME')
             current_soundcard = self.get_argument('SOUNDCARD_NAME')
@@ -394,15 +525,12 @@ class AudioConfigHandler(ZynthianConfigHandler):
         posted_config = tornado.escape.recursive_unicode(
             self.request.arguments)
 
-        command = self.get_argument('_command', '')
-        logging.info("COMMAND = {}".format(command))
-
         if command == 'REFRESH':
             errors = None
             self.config_env(posted_config)
         else:
             for k in list(posted_config):
-                if k.startswith('ZYNTHIAN_CONTROLLER'):
+                if k.startswith('ZYNTHIAN_CONTROLLER') or k.startswith('ALSA_'):
                     del posted_config[k]
             errors = self.update_config(posted_config)
             self.reboot_flag = True

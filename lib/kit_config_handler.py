@@ -38,16 +38,16 @@ from lib.wiring_config_handler import WiringConfigHandler
 class KitConfigHandler(ZynthianConfigHandler):
 
     kit_options = [
-        'MINI V2',
         'V5',
-        'Z2',
-        'Z2 PROTOTYPE',
+        'MINI V2',
         'V4',
         'V3-PRO',
         'V3',
         'V2+',
         'V2',
         'V1',
+        'Z2',
+        'Z2 PROTOTYPE',
         'Custom'
     ]
 

@@ -50,31 +50,31 @@ class SecurityConfigHandler(ZynthianConfigHandler):
             'CURRENT_PASSWORD': {
                 'type': 'password',
                 'title': 'Current password',
-                        'value': '*'
+                'value': '*'
             },
             'PASSWORD': {
                 'type': 'password',
                 'title': 'Password',
-                        'value': '*'
+                'value': '*'
             },
             'REPEAT_PASSWORD': {
                 'type': 'password',
                 'title': 'Repeat password',
-                        'value': '*'
+                'value': '*'
             },
             'HOSTNAME': {
                 'type': 'text',
                 'title': 'Hostname',
-                        'value': SecurityConfigHandler.get_host_name(),
-                        'advanced': True
+                'value': SecurityConfigHandler.get_host_name(),
+                'advanced': True
             },
             'REGENERATE_KEYS': {
                 'type': 'button',
                 'title': 'Regenerate Keys',
-                        'script_file': 'regenerate_keys.js',
-                        'button_type': 'button',
-                        'class': 'btn-warning btn-block',
-                        'advanced': True
+                'script_file': 'regenerate_keys.js',
+                'button_type': 'button',
+                'class': 'btn-warning btn-block',
+                'advanced': True
             },
             '_command': {
                 'type': 'hidden',
@@ -88,8 +88,7 @@ class SecurityConfigHandler(ZynthianConfigHandler):
         params = tornado.escape.recursive_unicode(self.request.arguments)
         logging.debug(f"COMMAND: {params['_command'][0]}")
         if params['_command'][0] == "REGENERATE_KEYS":
-            cmd = os.environ.get('ZYNTHIAN_SYS_DIR') + \
-                "/sbin/regenerate_keys.sh"
+            cmd = os.environ.get('ZYNTHIAN_SYS_DIR') + "/sbin/regenerate_keys.sh"
             check_output(cmd, shell=True)
             self.redirect('/sys-reboot')
         else:
@@ -149,20 +148,16 @@ class SecurityConfigHandler(ZynthianConfigHandler):
 
             # Change VNC password
             try:
-                check_output("echo \"{}\" | vncpasswd -f > /root/.vnc/passwd; chmod go-r /root/.vnc/passwd".format(
-                    config['PASSWORD'][0]), shell=True)
+                check_output(f"echo \"{config['PASSWORD'][0]}\" | vncpasswd -f > /root/.vnc/passwd; chmod go-r /root/.vnc/passwd", shell=True)
             except Exception as e:
-                logging.error(
-                    "Can't set new password for VNC Server! => {}".format(e))
+                logging.error(f"Can't set new password for VNC Server! => {e}")
                 return {'REPEAT_PASSWORD': "Can't set new password for VNC Server!"}
 
             # Change WIFI password
             try:
-                check_output(
-                    f"nmcli con modify zynthian-ap wifi-sec.psk \"{config['PASSWORD'][0]}\"", shell=True)
+                check_output(f"nmcli con modify zynthian-ap wifi-sec.psk \"{config['PASSWORD'][0]}\"", shell=True)
             except Exception as e:
-                logging.error(
-                    "Can't set new password for WIFI HotSpot! => {}".format(e))
+                logging.error(f"Can't set new password for WIFI HotSpot! => {e}")
                 return {'REPEAT_PASSWORD': "Can't set new password for WIFI HotSpot!"}
 
         # Update Hostname
@@ -183,8 +178,7 @@ class SecurityConfigHandler(ZynthianConfigHandler):
             with open("/etc/hosts", "r+") as f:
                 contents = f.read()
                 # contents = contents.replace(previousHostname, newHostname)
-                contents = re.sub(r"127\.0\.1\.1.*$",
-                                  "127.0.1.1\t{}".format(newHostname), contents)
+                contents = re.sub(r"127\.0\.1\.1.*$", "127.0.1.1\t{}".format(newHostname), contents)
                 f.seek(0)
                 f.truncate()
                 f.write(contents)
@@ -193,10 +187,9 @@ class SecurityConfigHandler(ZynthianConfigHandler):
             check_output(["hostnamectl", "set-hostname", newHostname])
 
             try:
-                check_output(
-                    f"nmcli con modify zynthian-ap wifi.ssid \"{newHostname}\"", shell=True)
+                check_output(f"nmcli con modify zynthian-ap wifi.ssid \"{newHostname}\"", shell=True)
             except Exception as e:
-                logging.error("Can't set WIFI HotSpot name! => {}".format(e))
+                logging.error(f"Can't set WIFI HotSpot name! => {e}")
                 return {'HOSTNAME': "Can't set WIFI HotSpot name!"}
 
             # self.reboot_flag=True
