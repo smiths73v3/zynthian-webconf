@@ -87,6 +87,7 @@ class UiTailThread(TailThread):
                 message = ZynthianWebSocketMessage(
                     'UiLogMessageHandler', line.decode())
                 self.websocket.write_message(jsonpickle.encode(message))
+            time.sleep(0.01)
 
         stdout_reader.join()
         stderr_reader.join()
