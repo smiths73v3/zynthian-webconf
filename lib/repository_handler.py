@@ -137,7 +137,7 @@ class RepositoryHandler(ZynthianConfigHandler):
         version_options[self.stable_branch + "-last"] = f"stable ({stags[-1]})"
         version_options[self.stable_branch] = f"staging ({self.stable_branch})"
         version_options[self.testing_branch] = f"testing ({self.testing_branch})"
-        version_options["custom"] = "custom"
+        version_options["custom"] = "custom (individual selection for each repository - wait 15s for page to refresh after selecting)"
 
         config = {
             "ZYNTHIAN_VERSION": {
