@@ -56,7 +56,7 @@ class RepositoryHandler(ZynthianConfigHandler):
 
     @tornado.web.authenticated
     def get(self, errors=None):
-        super().get("Repositories", self.get_config_info(), errors)
+        super().get("Software Version", self.get_config_info(), errors)
 
     @tornado.web.authenticated
     def post(self):
@@ -115,7 +115,7 @@ class RepositoryHandler(ZynthianConfigHandler):
             self.restart_ui_flag = True
             self.restart_webconf_flag = True
 
-        super().get("Repositories", config, errors)
+        super().get("Software Version", config, errors)
 
     def get_config_info(self, version=None):
         repo_branches = []
@@ -130,6 +130,7 @@ class RepositoryHandler(ZynthianConfigHandler):
             version = repo_branches[0]
 
         version_options = {}
+        self.sync_repo("zynthian-sys")
         # Get stable tag list => WARNING! zynthian-sys rules!
         stags = self.get_repo_tag_list("zynthian-sys", filter=self.stable_branch + "-")
         #for stag in stags:
@@ -152,6 +153,8 @@ class RepositoryHandler(ZynthianConfigHandler):
         }
         if version == "custom":
             for i, repitem in enumerate(self.repository_list):
+                if repitem != "zynthian-sys":
+                    self.sync_repo(repitem[0])
                 options = self.get_repo_tag_list(repitem[0])
                 options += self.get_repo_branch_list(repitem[0])
                 config[f"ZYNTHIAN_REPO_{repitem[0]}"] = {
@@ -168,10 +171,13 @@ class RepositoryHandler(ZynthianConfigHandler):
         }
         return config
 
+    def sync_repo(self, repo_name):
+        repo_dir = self.zynthian_base_dir + "/" + repo_name
+        check_output(f"git -C '{repo_dir}' fetch --tags --prune --prune-tags", shell=True)
+
     def get_repo_tag_list(self, repo_name, filter=None):
         result = []
         repo_dir = self.zynthian_base_dir + "/" + repo_name
-        check_output(f"git -C '{repo_dir}' remote update origin --prune", shell=True)
         for bline in check_output(f"git -C '{repo_dir}' tag -l {filter}*", shell=True).splitlines():
             result.append(bline.decode("utf-8").strip())
         result.sort()
@@ -180,7 +186,6 @@ class RepositoryHandler(ZynthianConfigHandler):
     def get_repo_branch_list(self, repo_name):
         result = []
         repo_dir = self.zynthian_base_dir + "/" + repo_name
-        check_output(f"git -C '{repo_dir}' remote update origin --prune", shell=True)
         for bline in check_output(f"git -C '{repo_dir}' branch -a", shell=True).splitlines():
             bname = bline.decode("utf-8").strip()
             if bname.startswith("*"):
@@ -196,8 +201,8 @@ class RepositoryHandler(ZynthianConfigHandler):
 
     def get_repo_current_branch(self, repo_name):
         repo_dir = self.zynthian_base_dir + "/" + repo_name
-        for bline in check_output(f"git -C '{repo_dir}' branch | grep \* | cut -d ' ' -f2", shell=True).splitlines():
-            return bline.decode("utf-8")
+        for bline in check_output(f"git -C '{repo_dir}' branch | grep \* | cut -d ' ' -f2", encoding="utf-8", shell=True).splitlines():
+            return bline
 
     def set_repo_tag(self, repo_name, tag_name):
         logging.info(f"Changing repository '{repo_name}' to tag '{tag_name}'")
