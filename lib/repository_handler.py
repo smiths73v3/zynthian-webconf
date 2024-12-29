@@ -213,7 +213,7 @@ class RepositoryHandler(ZynthianConfigHandler):
 
     def get_local_hash(self, repo):
         path = self.zynthian_base_dir + "/" + repo
-        return check_output(f"git -C {path} rev-parse HEAD", encoding="utf-8", shell=True)
+        return check_output(f"git -C {path} rev-parse HEAD", encoding="utf-8", shell=True).strip()
 
     def get_remote_hash(self, repo, branch):
         path = self.zynthian_base_dir + "/" + repo
