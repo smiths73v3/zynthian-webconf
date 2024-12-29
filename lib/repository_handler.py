@@ -170,7 +170,7 @@ class RepositoryHandler(ZynthianConfigHandler):
         # Remove all local branches to avoid interferring with update mechanism
         for branch in check_output(f"git -C '{repo_dir}' branch", encoding="utf-8", shell=True).split("\n"):
             try:
-                check_output(f"git -C '{repo_dir}' branch -d {branch}", encoding="utf-8", shell=True)
+                check_output(f"git -C '{repo_dir}' branch -D {branch}", encoding="utf-8", shell=True)
             except:
                 pass # Ignore failed attempts to delete branch, e.g. cannot delete current branch
         check_output(f"git -C '{repo_dir}' fetch --tags --prune --prune-tags", shell=True)
