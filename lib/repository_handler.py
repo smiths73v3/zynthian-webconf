@@ -104,7 +104,7 @@ class RepositoryHandler(ZynthianConfigHandler):
             }
         super().get("Software Version", config, errors)
 
-    def get_config_info(self, version=None, refresh=False):
+    def get_config_info(self, version=None):
         repo_branches = []
         for repitem in self.repository_list:
             branch = self.get_repo_current_branch(repitem[0])
@@ -117,8 +117,6 @@ class RepositoryHandler(ZynthianConfigHandler):
             version = repo_branches[0]
 
         version_options = {}
-        if refresh:
-            self.sync_repo("zynthian-sys")
         # Get stable tag list => WARNING! zynthian-sys rules!
         stags = self.get_repo_tag_list("zynthian-sys", filter=self.stable_branch + "-")
         #for stag in stags:
@@ -150,10 +148,9 @@ class RepositoryHandler(ZynthianConfigHandler):
         }
         if version == "custom":
             for i, repitem in enumerate(self.repository_list):
-                if refresh and repitem != "zynthian-sys":
-                    self.sync_repo(repitem[0])
                 options = self.get_repo_tag_list(repitem[0])
                 options += self.get_repo_branch_list(repitem[0])
+                options = sorted(options, key=str.casefold)
                 config[f"ZYNTHIAN_REPO_{repitem[0]}"] = {
                     'type': 'select',
                     'title': repitem[0],
@@ -170,13 +167,23 @@ class RepositoryHandler(ZynthianConfigHandler):
 
     def sync_repo(self, repo_name):
         repo_dir = self.zynthian_base_dir + "/" + repo_name
+        # Remove all local branches to avoid interferring with update mechanism
+        for branch in check_output(f"git -C '{repo_dir}' branch", encoding="utf-8", shell=True).split("\n"):
+            try:
+                check_output(f"git -C '{repo_dir}' branch -d {branch}", encoding="utf-8", shell=True)
+            except:
+                pass # Ignore failed attempts to delete branch, e.g. cannot delete current branch
         check_output(f"git -C '{repo_dir}' fetch --tags --prune --prune-tags", shell=True)
 
     def get_repo_tag_list(self, repo_name, filter=None):
         result = []
         repo_dir = self.zynthian_base_dir + "/" + repo_name
-        for bline in check_output(f"git -C '{repo_dir}' tag -l {filter}*", shell=True).splitlines():
-            result.append(bline.decode("utf-8").strip())
+        if filter:
+            for bline in check_output(f"git -C '{repo_dir}' tag -l {filter}*", shell=True).splitlines():
+                result.append(bline.decode("utf-8").strip())
+        else:
+            for bline in check_output(f"git -C '{repo_dir}' tag", shell=True).splitlines():
+                result.append(bline.decode("utf-8").strip())
         result.sort()
         return result
 
@@ -198,8 +205,11 @@ class RepositoryHandler(ZynthianConfigHandler):
 
     def get_repo_current_branch(self, repo_name):
         repo_dir = self.zynthian_base_dir + "/" + repo_name
-        for bline in check_output(f"git -C '{repo_dir}' branch | grep \* | cut -d ' ' -f2", encoding="utf-8", shell=True).splitlines():
-            return bline
+        for bline in check_output(f"git -C '{repo_dir}' branch", encoding="utf-8", shell=True).splitlines():
+            if bline.startswith("*"):
+                if bline.startswith("* (HEAD detached at "):
+                    return bline[20:-1]
+                return bline[2:]
 
     def get_local_hash(self, repo):
         path = self.zynthian_base_dir + "/" + repo
