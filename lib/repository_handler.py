@@ -57,20 +57,25 @@ class RepositoryHandler(ZynthianConfigHandler):
     def post(self):
         postedConfig = tornado.escape.recursive_unicode(self.request.arguments)
         logging.info(postedConfig)
+
         try:
             version = postedConfig['ZYNTHIAN_VERSION'][0]
         except:
             version = self.stable_branch
         errors = {}
 
-        changed_repos = 0
-        if postedConfig["_command"] == ["SAVE"]:
+        dirty = False
+        if postedConfig['_changed'] == ["REFRESH_BUTTON"]:
+            for repitem in self.repository_list:
+                self.sync_repo(repitem[0])
+        elif postedConfig["_command"] == ["SAVE"]:
             if version == "custom":
                 for repitem in self.repository_list:
                     posted_key = f"ZYNTHIAN_REPO_{repitem[0]}"
                     stag = postedConfig[posted_key][0]
-                    if self.set_repo_branch(repitem[0], stag):
-                        changed_repos += 1
+                    dirty |= self.set_repo_branch(repitem[0], stag)
+                    if not dirty:
+                        dirty |= self.get_local_hash(repitem[0]) != self.get_remote_hash(repitem[0], stag)
                 stable_tag = ""
             else:
                 for repitem in self.repository_list:
@@ -78,8 +83,9 @@ class RepositoryHandler(ZynthianConfigHandler):
                         stag = self.get_repo_tag_list(repitem[0], filter=self.stable_branch + "-")[-1]
                     else:
                         stag = version
-                    if self.set_repo_branch(repitem[0], stag):
-                        changed_repos += 1
+                    dirty |= self.set_repo_branch(repitem[0], stag)
+                    if not dirty:
+                        dirty |= self.get_local_hash(repitem[0]) != self.get_remote_hash(repitem[0], stag)
                 if version == self.stable_branch + "-last":
                     stable_tag = "last"
                 else:
@@ -90,18 +96,8 @@ class RepositoryHandler(ZynthianConfigHandler):
                 "ZYNTHIAN_STABLE_TAG": stable_tag
             })
 
-            #except Exception as err:
-            #    logging.error(err)
-            #    errors[posted_key] = err
-
-                #self.redirect("/sw-update")
-                #return
-            #self.restart_ui_flag = True
-            #self.restart_webconf_flag = True
-
-        refresh = postedConfig["_changed"] == ["ZYNTHIAN_VERSION"] and postedConfig["ZYNTHIAN_VERSION"]==["custom"]
-        config = self.get_config_info(version, refresh)
-        if changed_repos > 0:
+        config = self.get_config_info(version)
+        if dirty:
             config['ZYNTHIAN_MESSAGE'] = {
                 'type': 'html',
                 'content': "<div class='alert alert-success'>Some repo changed its branch. You may want to <a href='/sw-update'>update the software</a> for getting the latest changes.</div>"
@@ -130,7 +126,7 @@ class RepositoryHandler(ZynthianConfigHandler):
         version_options[self.stable_branch + "-last"] = f"stable ({stags[-1]})"
         version_options[self.stable_branch] = f"staging ({self.stable_branch})"
         version_options[self.testing_branch] = f"testing ({self.testing_branch})"
-        version_options["custom"] = "custom (individual selection for each repository - wait 10s for page to refresh after selecting)"
+        version_options["custom"] = "custom (individual selection for each repository)"
 
         config = {
             "ZYNTHIAN_VERSION": {
@@ -141,6 +137,15 @@ class RepositoryHandler(ZynthianConfigHandler):
                 'option_labels': version_options,
                 'refresh_on_change': True,
                 'advanced': False
+            },
+            'REFRESH_BUTTON': {
+                'type': 'boolean',
+                'title': 'Refresh software lists - click then wait for checkbox to clear',
+                'refresh_on_change': True
+            },
+            'PROGRESS': {
+                'type': 'html',
+                'content': '<style>.loader {margin: auto;border: 5px solid #EAF0F6;border-radius: 50%;border-top: 5px solid #FF7A59;width: 20px;height: 20px;animation: spinner 2s linear infinite;}@keyframes spinner {0% { transform: rotate(0deg); }100% { transform: rotate(360deg); }}</style><div id="busy" style="display:none;" class="loader"></div>'
             }
         }
         if version == "custom":
@@ -196,6 +201,14 @@ class RepositoryHandler(ZynthianConfigHandler):
         for bline in check_output(f"git -C '{repo_dir}' branch | grep \* | cut -d ' ' -f2", encoding="utf-8", shell=True).splitlines():
             return bline
 
+    def get_local_hash(self, repo):
+        path = self.zynthian_base_dir + "/" + repo
+        return check_output(f"git -C {path} rev-parse HEAD", encoding="utf-8", shell=True)
+
+    def get_remote_hash(self, repo, branch):
+        path = self.zynthian_base_dir + "/" + repo
+        return check_output(f"git -C {path} ls-remote origin {branch}", encoding="utf-8", shell=True).split()[0]
+
     def set_repo_branch(self, repo_name, branch_name):
         logging.info(f"Changing repository '{repo_name}' to branch '{branch_name}'")
         repo_dir = self.zynthian_base_dir + "/" + repo_name
@@ -203,10 +216,13 @@ class RepositoryHandler(ZynthianConfigHandler):
         branches = check_output(f"git -C {repo_dir} branch -a", encoding="utf-8", shell=True).split("\n")
         tags = check_output(f"git -C {repo_dir} tag", encoding="utf-8", shell=True).split("\n")
         if branch_name in branches and branch_name in tags:
+            # Delete branch with same name as tag
             check_output(f"git -C {repo_dir} branch -D {branch_name}", shell=True)
+            return True
         if branch_name != current_branch:
             logging.info(f"... needs change: '{current_branch}' != '{branch_name}'")
             check_output(f"cd {repo_dir}; git checkout .; git clean -f; git checkout {branch_name}", shell=True)
             return True
+        return False
 
 # -----------------------------------------------------------------------------
