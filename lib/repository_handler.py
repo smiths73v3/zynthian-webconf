@@ -65,7 +65,7 @@ class RepositoryHandler(ZynthianConfigHandler):
         errors = {}
 
         dirty = False
-        if postedConfig['_changed'] == ["REFRESH_BUTTON"]:
+        if postedConfig['_changed'] == ["REFRESH_VERSIONS"]:
             for repitem in self.repository_list:
                 self.sync_repo(repitem[0])
         elif postedConfig["_command"] == ["SAVE"]:
@@ -136,7 +136,7 @@ class RepositoryHandler(ZynthianConfigHandler):
                 'refresh_on_change': True,
                 'advanced': False
             },
-            'REFRESH_BUTTON': {
+            'REFRESH_VERSIONS': {
                 'type': 'button',
                 'button_type': 'submit',
                 'title': 'Refresh available software versions...'
