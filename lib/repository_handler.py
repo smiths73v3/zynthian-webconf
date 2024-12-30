@@ -137,13 +137,9 @@ class RepositoryHandler(ZynthianConfigHandler):
                 'advanced': False
             },
             'REFRESH_BUTTON': {
-                'type': 'boolean',
-                'title': 'Refresh software lists - click then wait for checkbox to clear',
-                'refresh_on_change': True
-            },
-            'PROGRESS': {
-                'type': 'html',
-                'content': '<style>.loader {margin: auto;border: 5px solid #EAF0F6;border-radius: 50%;border-top: 5px solid #FF7A59;width: 20px;height: 20px;animation: spinner 2s linear infinite;}@keyframes spinner {0% { transform: rotate(0deg); }100% { transform: rotate(360deg); }}</style><div id="busy" style="display:none;" class="loader"></div>'
+                'type': 'button',
+                'button_type': 'submit',
+                'title': 'Refresh available software versions...'
             }
         }
         if version == "custom":
@@ -173,7 +169,7 @@ class RepositoryHandler(ZynthianConfigHandler):
                 check_output(f"git -C '{repo_dir}' branch -D {branch}", encoding="utf-8", shell=True)
             except:
                 pass # Ignore failed attempts to delete branch, e.g. cannot delete current branch
-        check_output(f"git -C '{repo_dir}' fetch --tags --prune --prune-tags", shell=True)
+        check_output(f"git -C '{repo_dir}' fetch --tags --prune --prune-tags --force", shell=True)
 
     def get_repo_tag_list(self, repo_name, filter=None):
         result = []

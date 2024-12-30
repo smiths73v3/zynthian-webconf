@@ -7,7 +7,7 @@
 
 <h2>{{ escape(title) }}</h2>
 
-<form id="config_block_form" method="post">
+<form id="config_block_form" method="post" onsubmit="show_busy();">
 {% set root_vars = {} %}
 {% for varname in config %}
 	{% set parts = varname.split('__') %}
@@ -62,7 +62,7 @@
 		{% elif config[varname]['type']=='button' %}
 			{% if 'inline' in config[varname] and config[varname]['inline'] %} <label>&nbsp;</label> {% end %}
 			<button id="{{ escape(varname) }}" name="{{ escape(varname) }}" type="{{ config[varname]['button_type'] }}"
-			class="btn {% if 'class' in config[varname] %}{{ config[varname]['class'] }}{% end %}" {{ disabled }}>
+			class="btn {% if 'class' in config[varname] %}{{ config[varname]['class'] }}{% end %}" onclick="refresh(this.name)" {{ disabled }}>
 				{% if 'icon' in config[varname] %}
 					<i class="{{ config[varname]['icon'] }}"></i>
 				{% end %}

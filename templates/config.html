@@ -35,6 +35,15 @@
 	<script src="/bower_components/websocket/build/websocket.min.js"></script>
 	<script src="/js/zynthian-websocket.js"></script>
 
+	<script>
+		function show_busy() {
+			const busy_div = document.getElementById("busy");
+			const content_div = document.getElementById("config_content");
+			busy_div.style.display = "block";
+			content_div.style.display = "none";
+        };
+	</script>
+
 	<!-- Preload some images for avoiding problems when rebooting -->
 	<link rel="preload" href="/img/loading.gif" as="image">
 	<link rel="preload" href="/img/logo/zynthian_logo_black_trans_320.png" as="image">
@@ -142,7 +151,8 @@
 	</header>
 
 	<section id="section-config" class="content-section container pad-top80 pad-bot20 clearfix bg_logo_wave">
-		<div class="row">
+		<div id="busy" style="display:none"><div class="loader"></div><br/><div id="busy_caption" class="alert alert-success">Please wait whilst request is processed...</div></div>
+		<div id="config_content" class="row">
 			<div class="col-xs-12 col-xs-offset-0">
 				{% module Template(body, config=config, title=title, errors=errors) %}
 			</div>
