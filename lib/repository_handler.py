@@ -127,6 +127,11 @@ class RepositoryHandler(ZynthianConfigHandler):
         version_options["custom"] = "custom (individual selection for each repository)"
 
         config = {
+                'REFRESH_VERSIONS': {
+                'type': 'button',
+                'button_type': 'submit',
+                'title': 'Refresh available software versions...'
+            },
             "ZYNTHIAN_VERSION": {
                 'type': 'select',
                 'title': 'Version',
@@ -135,11 +140,6 @@ class RepositoryHandler(ZynthianConfigHandler):
                 'option_labels': version_options,
                 'refresh_on_change': True,
                 'advanced': False
-            },
-            'REFRESH_VERSIONS': {
-                'type': 'button',
-                'button_type': 'submit',
-                'title': 'Refresh available software versions...'
             }
         }
         if version == "custom":
