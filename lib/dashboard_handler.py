@@ -52,7 +52,7 @@ class DashboardHandler(ZynthianBasicHandler):
 
         # Get Memory & SD Card info
         ram_info = self.get_ram_info()
-        sd_info = self.get_sd_info()
+        root_info = self.get_root_info()
 
         # get I2C chips info
         i2c_chips = self.get_i2c_chips()
@@ -106,9 +106,9 @@ class DashboardHandler(ZynthianBasicHandler):
                                 'title': 'Memory',
                                 'value': "{} ({}/{})".format(ram_info['usage'], ram_info['used'], ram_info['total'])
                             },
-                            'SD CARD': {
-                                'title': 'SD Card',
-                                'value': "{} ({}/{})".format(sd_info['usage'], sd_info['used'], sd_info['total'])
+                            'STORAGE': {
+                                'title': 'Internal Storage',
+                                'value': "{} ({}/{})".format(root_info['usage'], root_info['used'], root_info['total'])
                             },
                             'TEMPERATURE': {
                                 'title': 'Temperature',
@@ -381,8 +381,12 @@ class DashboardHandler(ZynthianBasicHandler):
             return {'total': 'NA', 'used': 'NA', 'free': 'NA', 'usage': 'NA'}
 
     @staticmethod
-    def get_sd_info():
-        return DashboardHandler.get_volume_info("/dev/mmcblk0p2\|/dev/root")
+    def get_root_device():
+        return check_output("findmnt -n -o SOURCE /", encoding="utf-8", shell=True).strip()
+
+    @staticmethod
+    def get_root_info():
+        return DashboardHandler.get_volume_info(DashboardHandler.get_root_device())
 
     @staticmethod
     def get_media_info(mpath="/media/usb0"):
