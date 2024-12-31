@@ -336,12 +336,13 @@ class CapturesConfigHandler(ZynthianBasicHandler):
                 pass
 
             text = f.replace("'", "&#39;")
-            try:
-                l = mutagen.File(fullPath).info.length
-                text = "{} [{}:{:02d}]".format(
-                    f.replace("'", "&#39;"), int(l/60), int(l % 60))
-            except Exception as e:
-                logging.warning(e)
+            if fext.lower() != 'log':
+                try:
+                    l = mutagen.File(fullPath).info.length
+                    text = "{} [{}:{:02d}]".format(
+                        f.replace("'", "&#39;"), int(l/60), int(l % 60))
+                except Exception as e:
+                    logging.warning(e)
 
             capture = {
                 'text': text,
