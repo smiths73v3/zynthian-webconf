@@ -35,13 +35,6 @@
 	<script src="/bower_components/websocket/build/websocket.min.js"></script>
 	<script src="/js/zynthian-websocket.js"></script>
 
-	<script>
-		function show_busy() {
-			$("#busy").show();
-			$("#config_content").hide();
-        };
-	</script>
-
 	<!-- Preload some images for avoiding problems when rebooting -->
 	<link rel="preload" href="/img/loading.gif" as="image">
 	<link rel="preload" href="/img/logo/zynthian_logo_black_trans_320.png" as="image">
@@ -149,7 +142,7 @@
 	</header>
 
 	<section id="section-config" class="content-section container pad-top80 pad-bot20 clearfix bg_logo_wave">
-		<div id="busy" style="display:none"><div class="loader"></div><br/><div class="alert alert-info">Please wait whilst request is processed...</div></div>
+		<div id="busy" style="display:none"><div class="loader"></div></div>
 		<div id="config_content" class="row">
 			<div class="col-xs-12 col-xs-offset-0">
 				{% module Template(body, config=config, title=title, errors=errors) %}
@@ -171,6 +164,14 @@
 	</div>
 	{% end %}
 
+{% if info %}
+<script>
+function show_busy() {
+	$("#busy").fadeIn(500);
+}
+</script>
+{% end %}
+
 {% if info and 'scrollTop' in info %}
 <script>
 $(document).ready(function() {
@@ -180,5 +181,4 @@ $(document).ready(function() {
 {% end %}
 
 </body>
-
 </html>

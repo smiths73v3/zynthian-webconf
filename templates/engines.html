@@ -1,4 +1,3 @@
-<div id="busy" style="display:none"><div class="loader"></div><br/><div class="alert alert-info">Please wait whilst request is processed...</div></div>
 <div id="content">
 <h2>{{ title }}</h2>
 
@@ -246,8 +245,7 @@ function confirm_long_time_proc(ev) {
     if (!confirm("This operation could take a long time to finish.\nAre you sure to continue?")) {
         ev.preventDefault();
     } else {
-        $("#busy").show();
-        $("#content").hide();
+        show_busy();
     }
 }
 
