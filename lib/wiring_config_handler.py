@@ -431,10 +431,11 @@ class WiringConfigHandler(ZynthianConfigHandler):
             mcp23017_config_flag = False
             if wiring_layout == "V5_ZYNFACE":
                 zynaptik_config_flag = True
+                n_extra_switches = 24
             else:
                 zynaptik_config_flag = False
+                n_extra_switches = 26
             zyntof_config_flag = False
-            n_extra_switches = 24
         elif wiring_layout.startswith("MINI"):
             encoders_config_flag = False
             mcp23017_config_flag = False
