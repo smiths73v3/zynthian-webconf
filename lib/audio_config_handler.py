@@ -256,7 +256,7 @@ soundcard_presets = {
     },
     'Dummy device': {
         'SOUNDCARD_CONFIG': '',
-        'JACKD_OPTIONS': '-P 70 -s -d alsa -d hw:0 -r 48000 -p 256 -n 2 -X raw',
+        'JACKD_OPTIONS': '-P 70 -s -d alsa -d hw:Dummy -r 48000 -p 256 -n 2 -X raw',
         'SOUNDCARD_MIXER': ''
     },
     'Custom device': {
