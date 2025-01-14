@@ -480,6 +480,10 @@ class AudioConfigHandler(ZynthianConfigHandler):
                     alsa_config += f" -d hw{val}"
                 else:
                     alsa_config = alsa_config.replace(match.group(0), f"-d hw:{val}")
+                if val == "US16x08":
+                    # Set default audio routing
+                    for idx in range(8):
+                        alsaaudio.Mixer("Line Out", idx).setenum(idx + 2)
                 val = self.get_argument('ALSA_SAMPLERATE')
                 match = re.search(r"-r\s*(\S*)", alsa_config)
                 if match is None:
