@@ -4,7 +4,7 @@
 #
 # Audio Configuration Handler
 #
-# Copyright (C) 2017-2024 Fernando Moyano <jofemodo@zynthian.org>
+# Copyright (C) 2017-2025 Fernando Moyano <jofemodo@zynthian.org>
 #
 # ********************************************************************
 #
@@ -484,6 +484,7 @@ class AudioConfigHandler(ZynthianConfigHandler):
                     # Set default audio routing
                     for idx in range(8):
                         alsaaudio.Mixer("Line Out", idx).setenum(idx + 2)
+                    alsaaudio.Mixer("Buss Out").setmute(1)
                 val = self.get_argument('ALSA_SAMPLERATE')
                 match = re.search(r"-r\s*(\S*)", alsa_config)
                 if match is None:
