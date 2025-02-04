@@ -114,9 +114,9 @@ class ZynthianBasicHandler(tornado.web.RequestHandler):
 
         # If VNC Server is enabled, add access URI to info
         if self.is_service_active("novnc0"):
-            info['novnc0_uri'] = "http://{}:6080/vnc.html".format(self.request.host)
+            info['novnc0_uri'] = f"{self.request.protocol}://{self.request.host}:6080/vnc.html"
         if self.is_service_active("novnc1"):
-            info['novnc1_uri'] = "http://{}:6081/vnc.html".format(self.request.host)
+            info['novnc1_uri'] = f"{self.request.protocol}://{self.request.host}:6081/vnc.html"
 
         # Restore scroll position
         info['scrollTop'] = int(float(self.get_argument('_scrollTop', '0')))
