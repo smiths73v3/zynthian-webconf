@@ -127,11 +127,6 @@ class RepositoryHandler(ZynthianConfigHandler):
         version_options["custom"] = "custom (individual selection for each repository)"
 
         config = {
-                'REFRESH_VERSIONS': {
-                'type': 'button',
-                'button_type': 'submit',
-                'title': 'Refresh available software versions...'
-            },
             "ZYNTHIAN_VERSION": {
                 'type': 'select',
                 'title': 'Version',
@@ -155,6 +150,13 @@ class RepositoryHandler(ZynthianConfigHandler):
                     'option_labels': OrderedDict([(opt, opt) for opt in options]),
                     'advanced': repitem[1]
                 }
+        config["REFRESH_VERSIONS"] = {
+            'type': 'button',
+            'button_type': 'submit',
+            'title': 'Refresh available software versions...',
+            'class': 'btn-theme btn-block',
+            'icon': 'fa fa-recycle'
+        }
         config['_SPACER_'] = {
             'type': 'html',
             'content': "<br>"
