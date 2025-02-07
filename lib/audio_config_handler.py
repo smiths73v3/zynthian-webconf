@@ -140,7 +140,7 @@ soundcard_presets = {
         'SOUNDCARD_MIXER': ''
     },
     'IQAudio DAC Pro': {
-        'SOUNDCARD_CONFIG': 'dtoverlay=iqaudio-dacplus',
+        'SOUNDCARD_CONFIG': 'dtoverlay=iqaudio-dac',
         'JACKD_OPTIONS': f"-P 70 -s -S -d alsa -d hw:Pro {default_i2s_bufreq_config} -o 2 -X raw",
         'SOUNDCARD_MIXER': ''
     },
