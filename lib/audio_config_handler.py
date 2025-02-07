@@ -139,7 +139,7 @@ soundcard_presets = {
         'JACKD_OPTIONS': f"-P 70 -s -S -d alsa -d hw:IQaudIODAC {default_i2s_bufreq_config} -o 2 -X raw",
         'SOUNDCARD_MIXER': ''
     },
-    'IQAudio DAC+': {
+    'IQAudio DAC Pro': {
         'SOUNDCARD_CONFIG': 'dtoverlay=iqaudio-dacplus',
         'JACKD_OPTIONS': f"-P 70 -s -S -d alsa -d hw:Pro {default_i2s_bufreq_config} -o 2 -X raw",
         'SOUNDCARD_MIXER': ''
