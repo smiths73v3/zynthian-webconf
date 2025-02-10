@@ -139,6 +139,11 @@ soundcard_presets = {
         'JACKD_OPTIONS': f"-P 70 -s -S -d alsa -d hw:IQaudIODAC {default_i2s_bufreq_config} -o 2 -X raw",
         'SOUNDCARD_MIXER': ''
     },
+    'IQAudio DAC Pro': {
+        'SOUNDCARD_CONFIG': 'dtoverlay=iqaudio-dac',
+        'JACKD_OPTIONS': f"-P 70 -s -S -d alsa -d hw:Pro {default_i2s_bufreq_config} -o 2 -X raw",
+        'SOUNDCARD_MIXER': ''
+    },
     'IQAudio Digi': {
         'SOUNDCARD_CONFIG': 'dtoverlay=iqaudio-digi-wm8804-audio',
         'JACKD_OPTIONS': f"-P 70 -s -S -d alsa -d hw:0 {default_i2s_bufreq_config} -o 2 -X raw",
