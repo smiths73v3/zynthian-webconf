@@ -4,7 +4,7 @@
 #
 # Presets Manager Handler
 #
-# Copyright (C) 2017 Markus Heidt <markus@heidt-tech.com>
+# Copyright (C) 2017-2025 Markus Heidt <markus@heidt-tech.com>
 #
 # ********************************************************************
 #
@@ -61,6 +61,7 @@ class CapturesConfigHandler(ZynthianBasicHandler):
             captures.append(self.create_node('wav'))
             captures.append(self.create_node('ogg'))
             captures.append(self.create_node('mp3'))
+            captures.append(self.create_node('m3u'))
             captures.append(self.create_node('mid'))
             captures.append(self.create_node('log'))
 
@@ -267,6 +268,8 @@ class CapturesConfigHandler(ZynthianBasicHandler):
             return 'audio/ogg'
         elif fext == '.mp3':
             return 'audio/mp3'
+        elif fext == '.m3u':
+            return 'text/plain'
         elif fext == '.wav':
             return 'application/wav'
         elif fext == '.mp4':
