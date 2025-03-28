@@ -25,6 +25,7 @@
 import os
 import re
 import PAM
+import bcrypt
 import logging
 import tornado.web
 from subprocess import check_output
@@ -159,6 +160,16 @@ class SecurityConfigHandler(ZynthianConfigHandler):
             except Exception as e:
                 logging.error(f"Can't set new password for WIFI HotSpot! => {e}")
                 return {'REPEAT_PASSWORD': "Can't set new password for WIFI HotSpot!"}
+
+            # Change filebrowser password
+            try:
+                check_output("systemctl stop filebrowser", shell=True)
+                check_output(f"cd $ZYNTHIAN_SW_DIR/filebrowser; ./filebrowser users update zynthian --password \"{config['PASSWORD'][0]}\"", shell=True)
+                check_output("systemctl start filebrowser", shell=True)
+            except Exception as e:
+                logging.error(f"Can't set new password for filebrowser! => {e}")
+                return {'REPEAT_PASSWORD': "Can't set new password for File Browser!"}
+
 
         # Update Hostname
         newHostname = config['HOSTNAME'][0]

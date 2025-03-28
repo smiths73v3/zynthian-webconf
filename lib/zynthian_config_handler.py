@@ -118,6 +118,10 @@ class ZynthianBasicHandler(tornado.web.RequestHandler):
         if self.is_service_active("novnc1"):
             info['novnc1_uri'] = f"{self.request.protocol}://{self.request.host}:6081/vnc.html"
 
+        # If filebrowser is enabled, add access URI to info
+        if self.is_service_active("filebrowser"):
+            info['filebrowser_uri'] = "http://{}:8099".format(self.request.host)
+
         # Restore scroll position
         info['scrollTop'] = int(float(self.get_argument('_scrollTop', '0')))
 
