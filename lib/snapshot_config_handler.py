@@ -283,7 +283,7 @@ class SnapshotConfigHandler(ZynthianBasicHandler):
                         try:
                             prog_details = zynthian_legacy_snapshot().convert_state(json.load(ssfile))
                         except:
-                            pass
+                            prog_details = ""
                         ssfile.close()
                 else:
                     continue
