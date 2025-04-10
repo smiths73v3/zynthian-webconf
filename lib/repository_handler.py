@@ -223,13 +223,20 @@ class RepositoryHandler(ZynthianConfigHandler):
         current_branch = self.get_repo_current_branch(repo_name)
         branches = check_output(f"git -C {repo_dir} branch -a", encoding="utf-8", shell=True).split("\n")
         tags = check_output(f"git -C {repo_dir} tag", encoding="utf-8", shell=True).split("\n")
-        if branch_name in branches and branch_name in tags:
-            # Delete branch with same name as tag
-            check_output(f"git -C {repo_dir} branch -D {branch_name}", shell=True)
-            return True
         if branch_name != current_branch:
             logging.info(f"... needs change: '{current_branch}' != '{branch_name}'")
-            check_output(f"cd {repo_dir}; git checkout .; git clean -f; git checkout {branch_name}", shell=True)
+            # If it's a tag release
+            if branch_name in tags:
+                # Clean modifications
+                check_output(f"cd {repo_dir}; git checkout .; git clean -f", shell=True)
+                # Remove old tag-branch
+                if branch_name in branches:
+                    check_output(f"git -C {repo_dir} branch -D {branch_name}", shell=True)
+                # Checkout tag to a new branch
+                check_output(f"git -C {repo_dir} checkout tags/{branch_name} -b {branch_name}", shell=True)
+            # If it's a normal branch
+            else:
+                check_output(f"cd {repo_dir}; git checkout .; git clean -f; git checkout {branch_name}", shell=True)
             return True
         return False
 
