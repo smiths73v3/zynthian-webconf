@@ -279,12 +279,13 @@ class SnapshotConfigHandler(ZynthianBasicHandler):
                         prog_name = fname
                     name = prog_name
 
-                    with open(fullpath) as ssfile:
-                        try:
+                    try:
+                        logging.debug(f"Getting snapshot details for '{fullpath}' ...")
+                        with open(fullpath) as ssfile:
                             prog_details = zynthian_legacy_snapshot().convert_state(json.load(ssfile))
-                        except:
-                            prog_details = ""
-                        ssfile.close()
+                    except Exception as e:
+                        logging.error(f"Can't get snapshot details for '{fullpath}' => {e}")
+                        prog_details = ""
                 else:
                     continue
 
@@ -304,8 +305,7 @@ class SnapshotConfigHandler(ZynthianBasicHandler):
 
             idx += 1
             if os.path.isdir(fullpath):
-                snapshot['nodes'] = self.walk_directory(
-                    fullpath, idx, bank_num, bank_name)
+                snapshot['nodes'] = self.walk_directory(fullpath, idx, bank_num, bank_name)
                 idx += len(snapshot['nodes'])
 
             snapshots.append(snapshot)
