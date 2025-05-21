@@ -62,7 +62,7 @@
 		{% elif config[varname]['type']=='button' %}
 			{% if 'inline' in config[varname] and config[varname]['inline'] %} <label>&nbsp;</label> {% end %}
 			<button id="{{ escape(varname) }}" name="{{ escape(varname) }}" type="{{ config[varname]['button_type'] }}"
-			class="btn {% if 'class' in config[varname] %}{{ config[varname]['class'] }}{% end %}" onclick="refresh(this.name)" {{ disabled }}>
+			class="btn {% if 'class' in config[varname] %}{{ config[varname]['class'] }}{% end %}" {{ disabled }}>
 				{% if 'icon' in config[varname] %}
 					<i class="{{ config[varname]['icon'] }}"></i>
 				{% end %}
