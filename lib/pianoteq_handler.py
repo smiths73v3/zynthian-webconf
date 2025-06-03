@@ -111,8 +111,13 @@ class PianoteqHandler(ZynthianBasicHandler):
         # Install new binary package
         command = self.recipes_dir + "/install_pianoteq_binary.sh {}; exit 0".format(filename)
         result = check_output(command, shell=True, stderr=STDOUT).decode("utf-8")
-        # TODO! if result is OK, return None!
-        return result
+        rows = result.splitlines()
+        if rows[-1] == "Pianoteq Installed Successfully!":
+            logging.info(rows[-1])
+            return None
+        else:
+            logging.error(result)
+            return rows[-1]
 
     def do_install_pianoteq_ptq(self, filename):
         try:
