@@ -23,14 +23,27 @@
 
 	<div id='upload-button'>
 		<br/>
-		<b>Osirus ROM file:</b>
-		<input id="rom_fapth_osirus" readonly="readonly" value="{{ config['ZYNTHIAN_DSP56300_ROM_FILE_OSIRUS'] }}">
+		<b>Osirus ROM file (Access Virus A/B/C):</b>
+		<input id="rom_fpath_osirus" readonly="readonly" value="{{ config['ZYNTHIAN_DSP56300_ROM_FILE_OSIRUS'] }}">
 		<input id="upload_show_osirus" class="btn btn-lg btn-theme" type="button" value="Upload Osirus ROM file" onclick="uploadShowButton('Osirus')">
 		<br/>
 		<br/>
-		<b>OsTIrus ROM file:</b>
-		<input id="rom_fapth_ostirus" readonly="readonly" value="{{ config['ZYNTHIAN_DSP56300_ROM_FILE_OSTIRUS'] }}">
+		<b>OsTIrus ROM file (Access Virus TI):</b>
+		<input id="rom_fpath_ostirus" readonly="readonly" value="{{ config['ZYNTHIAN_DSP56300_ROM_FILE_OSTIRUS'] }}">
 		<input id="upload_show_ostirus" class="btn btn-lg btn-theme" type="button" value="Upload OsTIrus ROM file" onclick="uploadShowButton('OsTIrus')">
+		<br/>
+		<br/>
+		<b>Vavra ROM file (Waldorf MicroQ):</b>
+		<input id="rom_fpath_vavra" readonly="readonly" value="{{ config['ZYNTHIAN_DSP56300_ROM_FILE_VAVRA'] }}">
+		<input id="upload_show_vavra" class="btn btn-lg btn-theme" type="button" value="Upload Vavra ROM file" onclick="uploadShowButton('Vavra')">
+		<br/>
+		<br/>
+		<b>Xenia ROM files (Waldorf MicroWave):</b>
+		<input id="rom_fpath_xenia" readonly="readonly" value="{{ config['ZYNTHIAN_DSP56300_ROM_FILE_XENIA'] }}">
+		<input id="upload_show_xenia" class="btn btn-lg btn-theme" type="button" value="Upload Xenia ROM file" onclick="uploadShowButton('Xenia')">
+		<br/>
+		<br/>
+		<input id="delete_xenia" class="btn btn-lg btn-theme" type="button" value="Delete Xenia ROM files" onclick="deleteButton('Xenia')">
 		<br/>
 	</div>
 
@@ -44,6 +57,13 @@
 		<p>
 			<b>The new ROM file was installed successfully.</b><br>
 			You should reload all chains using DSP56300 emulator or simply <a href="/sys-reboot">reboot your zynthian</a>.
+		</p>
+	</div>
+
+	<div id='delete-success'>
+		<p>
+			<b>The ROM files were removed successfully.</b><br>
+			You can't use the Xenia emulator until valid ROM files are upload again.
 		</p>
 	</div>
 
@@ -65,10 +85,18 @@ var dsp56300_gear_name = "";
 
 $(document).ready(function (){
 	$("#loading-div-background").hide();
-	if (window.location.href.endsWith("?install_success")) $("#installation-success").show();
-	else $("#installation-success").hide();
+	if (window.location.href.endsWith("?install_success")) {
+		$("#delete-success").hide();
+		$("#installation-success").show();
+	} else if (window.location.href.endsWith("?delete_success")) {
+		$("#installation-success").hide();
+		$("#delete-success").show();
+	} else {
+		$("#delete-success").hide();
+	 	$("#installation-success").hide();
+	}
 	$("#upload-finished").hide();
-	$('#input-uploadfile-type')[0].value = 'bin,BIN';
+	$('#input-uploadfile-type')[0].value = 'bin,BIN,mid,MID';
 
 	var deferred = $.Deferred();
 	deferred.done(function(value) {
@@ -108,8 +136,8 @@ $(document).ready(function (){
 			$("#upload-finished").hide();
 			if (this.status == 200){
 				$("#installation-success").show();
-			} 
-			window.location.href = window.location.href + "?install_success";
+			}
+			window.location.href = window.location.href.split("?")[0] + "?install_success";
 		};
 
 		ajax.onerror = function() {
@@ -126,6 +154,40 @@ function uploadShowButton(gear_name) {
 	$('#dsp56300-upload-form').attr('action', '/upload?redirectUrl=/sw-dsp56300&clientId=' + client_id);
 	$('#upload_panel').show(500)
 	$('#upload_progress_panel').hide(500);
+}
+
+function deleteButton(gear_name) {
+	dsp56300_gear_name = gear_name;
+	var ajaxData = new FormData(dsp56300Form);
+	ajaxData.append('ZYNTHIAN_DSP56300_ACTION','DELETE_' +	dsp56300_gear_name.toUpperCase() + '_ROMFILE');
+
+	var ajax = new XMLHttpRequest();
+	ajax.open( dsp56300Form.getAttribute( 'method' ), dsp56300Form.getAttribute( 'action' ), true );
+
+	ajax.onload = function() 	{
+		if( ajax.status >= 200 && ajax.status < 400 )	{
+			if( ajax.status != 200) {
+				console.log("delete error: " + ajax.response);
+			}
+		}
+		else {
+			alert( ajax.response );
+		}
+	};
+
+	ajax.onloadend = function() {
+		$("#upload-finished").hide();
+		if (this.status == 200) {
+			$("#delete-success").show();
+		}
+		window.location.href = window.location.href.split("?")[0] + "?delete_success";
+	};
+
+	ajax.onerror = function() {
+		console.log("revise delete failed");
+	};
+
+	ajax.send(ajaxData);
 }
 
 function showProgressAnimation(){
