@@ -46,10 +46,13 @@ class dsp56300Handler(ZynthianBasicHandler):
     data_dir = os.environ.get('ZYNTHIAN_DATA_DIR', "/zynthian/zynthian-data")
     my_data_dir = os.environ.get('ZYNTHIAN_MY_DATA_DIR', "/zynthian/zynthian-my-data")
 
+    config_dpath = "/root/.local/share/The Usual Suspects/"
     plugins_dpath = "/usr/local/lib/lv2"
     gear_info = {
         "Osirus": "http://theusualsuspects.lv2.Osirus",
-        "OsTIrus": "http://theusualsuspects.lv2.OsTIrus"
+        "OsTIrus": "http://theusualsuspects.lv2.OsTIrus",
+        "Vavra": "http://theusualsuspects.lv2.Vavra",
+        "Xenia": "http://theusualsuspects.lv2.Xenia"
     }
 
     @tornado.web.authenticated
@@ -72,6 +75,9 @@ class dsp56300Handler(ZynthianBasicHandler):
                 errors = {
                     'INSTALL_OSIRUS_ROMFILE': lambda: self.do_install_romfile("Osirus"),
                     'INSTALL_OSTIRUS_ROMFILE': lambda: self.do_install_romfile("OsTIrus"),
+                    'INSTALL_VAVRA_ROMFILE': lambda: self.do_install_romfile("Vavra"),
+                    'INSTALL_XENIA_ROMFILE': lambda: self.do_install_romfile("Xenia"),
+                    'DELETE_XENIA_ROMFILE': lambda: self.do_remove_romfile("Xenia"),
                 }[action]()
             except Exception as err:
                 logging.error(err)
@@ -83,6 +89,11 @@ class dsp56300Handler(ZynthianBasicHandler):
             errors = f"Can't find a LV2 bundle dir for device '{gear_name}'"
             logging.error(errors)
             return errors
+
+        roms_dpath = self.config_dpath + "/" + gear_name + "/roms"
+        if not os.path.isdir(roms_dpath):
+            logging.info(f"Creating ROMs dir '{roms_dpath}'")
+            os.makedirs(roms_dpath)
 
         try:
             plugin_uri = self.gear_info[gear_name]
@@ -97,20 +108,39 @@ class dsp56300Handler(ZynthianBasicHandler):
             try:
                 # Remove existing ROM files
                 logging.info(f"Remove existing ROM files from {plugin_bundle_dpath} ...")
-                res = check_output(f"cd {plugin_bundle_dpath}; rm -f *.bin; rm -f *.BIN",
-                                   shell=True, stderr=STDOUT).decode("utf-8")
+                res = check_output(f"cd \"{plugin_bundle_dpath}\"; rm -f *.bin; rm -f *.BIN", shell=True, stderr=STDOUT).decode("utf-8")
+                if gear_name != "Xenia":
+                    logging.info(f"Remove existing ROM files from {roms_dpath} ...")
+                    res = check_output(f"cd \"{roms_dpath}\"; rm -f *.bin; rm -f *.BIN; rm *.mid; rm *.MID", shell=True, stderr=STDOUT).decode("utf-8")
                 # Copy uploaded file
                 fname = os.path.basename(fpath)
-                logging.info(f"Moving {fname} to {plugin_bundle_dpath} ...")
-                shutil.move(fpath, plugin_bundle_dpath + "/" + fname)
+                logging.info(f"Moving {fname} to {roms_dpath} ...")
+                shutil.move(fpath, roms_dpath + "/" + fname)
                 # Generate presets
-                errors = self.generate_presets(plugin_uri)
+                if gear_name in ("Osirus", "OsTIrus"):
+                    errors = self.generate_presets(plugin_uri)
             except Exception as e:
-                errors = f"ROM file install failed: {e}"
+                errors = f"Install ROM file for '{gear_name}' failed: {e}"
                 logging.error(errors)
         else:
             errors = 'Please, select a ROM file to install'
 
+        return errors
+
+    def do_remove_romfile(self, gear_name):
+        roms_dpath = self.config_dpath + "/" + gear_name + "/roms"
+        if not os.path.isdir(roms_dpath):
+            errors = f"ROMs directory for '{gear_name}' doesn't exist!"
+            logging.error(errors)
+            return errors
+        try:
+            # Remove existing ROM files
+            logging.info(f"Remove existing ROM files from {roms_dpath} ...")
+            res = check_output(f"cd \"{roms_dpath}\"; rm -f *.bin; rm -f *.BIN; rm *.mid; rm *.MID", shell=True, stderr=STDOUT).decode("utf-8")
+            errors = None
+        except Exception as e:
+            errors = f"Delete ROM files for '{gear_name}' failed: {e}"
+            logging.error(errors)
         return errors
 
     def get_config(self):
@@ -118,14 +148,19 @@ class dsp56300Handler(ZynthianBasicHandler):
             'ZYNTHIAN_UPLOAD_MULTIPLE': False
         }
         for gname in self.gear_info:
-            dpath = self.plugins_dpath + "/" + gname + ".lv2"
-            flist = list(glob.iglob("*.bin", root_dir=dpath)) + list(glob.iglob("*.BIN", root_dir=dpath))
+            flist = self.get_rom_files(self.config_dpath + "/" + gname + "/roms")
+            flist += self.get_rom_files(self.plugins_dpath + "/" + gname + ".lv2")
             if len(flist) > 0:
-                config[f"ZYNTHIAN_DSP56300_ROM_FILE_{gname.upper()}"] = flist[0]
+                config[f"ZYNTHIAN_DSP56300_ROM_FILE_{gname.upper()}"] = ", ".join(flist)
             else:
                 config[f"ZYNTHIAN_DSP56300_ROM_FILE_{gname.upper()}"] = None
-                logging.warning(f"No ROM file found for {gname} ({dpath}).")
+                logging.warning(f"No ROM files found for {gname}.")
         return config
+
+    def get_rom_files(self, dpath):
+        flist = list(glob.iglob("*.bin", root_dir=dpath)) + list(glob.iglob("*.BIN", root_dir=dpath))
+        flist += list(glob.iglob("*.MID", root_dir=dpath)) + list(glob.iglob("*.mid", root_dir=dpath))
+        return flist
 
     def generate_presets(self, plugin_uri):
         errors = None
