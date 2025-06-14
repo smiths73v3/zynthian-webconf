@@ -46,7 +46,7 @@ class dsp56300Handler(ZynthianBasicHandler):
     data_dir = os.environ.get('ZYNTHIAN_DATA_DIR', "/zynthian/zynthian-data")
     my_data_dir = os.environ.get('ZYNTHIAN_MY_DATA_DIR', "/zynthian/zynthian-my-data")
 
-    config_dpath = "/root/.local/share/The Usual Suspects/"
+    config_dpath = "/root/.local/share/The Usual Suspects"
     plugins_dpath = "/usr/local/lib/lv2"
     gear_info = {
         "Osirus": "http://theusualsuspects.lv2.Osirus",
@@ -90,7 +90,8 @@ class dsp56300Handler(ZynthianBasicHandler):
             logging.error(errors)
             return errors
 
-        roms_dpath = self.config_dpath + "/" + gear_name + "/roms"
+        gear_path = self.config_dpath + "/" + gear_name
+        roms_dpath = gear_path + "/roms"
         if not os.path.isdir(roms_dpath):
             logging.info(f"Creating ROMs dir '{roms_dpath}'")
             os.makedirs(roms_dpath)
@@ -111,7 +112,7 @@ class dsp56300Handler(ZynthianBasicHandler):
                 res = check_output(f"cd \"{plugin_bundle_dpath}\"; rm -f *.bin; rm -f *.BIN", shell=True, stderr=STDOUT).decode("utf-8")
                 if gear_name != "Xenia":
                     logging.info(f"Remove existing ROM files from {roms_dpath} ...")
-                    res = check_output(f"cd \"{roms_dpath}\"; rm -f *.bin; rm -f *.BIN; rm *.mid; rm *.MID", shell=True, stderr=STDOUT).decode("utf-8")
+                    res = check_output(f"cd \"{roms_dpath}\"; rm -f *.bin; rm -f *.BIN; rm -f *.mid; rm -f *.MID", shell=True, stderr=STDOUT).decode("utf-8")
                 # Copy uploaded file
                 fname = os.path.basename(fpath)
                 logging.info(f"Moving {fname} to {roms_dpath} ...")
@@ -119,6 +120,9 @@ class dsp56300Handler(ZynthianBasicHandler):
                 # Generate presets
                 if gear_name in ("Osirus", "OsTIrus"):
                     errors = self.generate_presets(plugin_uri)
+                # Copy patchmanager config file
+                else:
+                    check_output(f"cp -an \"{self.data_dir}/presets/{gear_name.lower()}/patchmanagerdb.json\" \"{gear_path}/patchmanager\"", shell=True, stderr=STDOUT)
             except Exception as e:
                 errors = f"Install ROM file for '{gear_name}' failed: {e}"
                 logging.error(errors)
@@ -136,7 +140,7 @@ class dsp56300Handler(ZynthianBasicHandler):
         try:
             # Remove existing ROM files
             logging.info(f"Remove existing ROM files from {roms_dpath} ...")
-            res = check_output(f"cd \"{roms_dpath}\"; rm -f *.bin; rm -f *.BIN; rm *.mid; rm *.MID", shell=True, stderr=STDOUT).decode("utf-8")
+            res = check_output(f"cd \"{roms_dpath}\"; rm -f *.bin; rm -f *.BIN; rm -f *.mid; rm -f *.MID", shell=True, stderr=STDOUT).decode("utf-8")
             errors = None
         except Exception as e:
             errors = f"Delete ROM files for '{gear_name}' failed: {e}"
