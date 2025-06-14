@@ -122,7 +122,11 @@ class dsp56300Handler(ZynthianBasicHandler):
                     errors = self.generate_presets(plugin_uri)
                 # Copy patchmanager config file
                 else:
-                    check_output(f"cp -an \"{self.data_dir}/presets/{gear_name.lower()}/patchmanagerdb.json\" \"{gear_path}/patchmanager\"", shell=True, stderr=STDOUT)
+                    pm_dpath = gear_path + "/patchmanager"
+                    if not os.path.isdir(pm_dpath):
+                        logging.info(f"Creating patchmanager config dir '{pm_dpath}'")
+                        os.makedirs(pm_dpath)
+                        check_output(f"cp -a \"{self.data_dir}/presets/{gear_name.lower()}/patchmanagerdb.json\" \"{pm_dpath}\"", shell=True, stderr=STDOUT)
             except Exception as e:
                 errors = f"Install ROM file for '{gear_name}' failed: {e}"
                 logging.error(errors)
