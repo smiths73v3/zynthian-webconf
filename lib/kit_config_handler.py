@@ -48,6 +48,7 @@ class KitConfigHandler(ZynthianConfigHandler):
         'V1',
         'Z2',
         'Z2 PROTOTYPE',
+        'x86_64',
         'Custom'
     ]
 
@@ -147,6 +148,13 @@ class KitConfigHandler(ZynthianConfigHandler):
                 soundcard_name = "HifiBerry DAC+"
                 display_name = "PiTFT 2.8 Resistive"
                 wiring_layout = "PROTOTYPE-4"
+                wiring_layout_custom_profile = ""
+                ui_font_size = "11"
+                overclocking = "None"
+            elif kit_version == "x86_64":
+                soundcard_name = "x86_64"
+                display_name = "HDMI"
+                wiring_layout = "TOUCH_ONLY"
                 wiring_layout_custom_profile = ""
                 ui_font_size = "11"
                 overclocking = "None"

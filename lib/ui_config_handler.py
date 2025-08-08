@@ -56,7 +56,7 @@ class UiConfigHandler(ZynthianConfigHandler):
                 touch_navigation = "touch_widgets"
             elif touch_navigation == "0":
                 touch_keypad = os.environ.get('ZYNTHIAN_TOUCH_KEYPAD', '')
-                if touch_keypad == "V5":
+                if touch_keypad == "V5" or touch_keypad == "x86_64":
                     touch_navigation = "v5_keypad_left"
 
         config = OrderedDict([

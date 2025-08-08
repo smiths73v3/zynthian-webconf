@@ -40,6 +40,8 @@ except:
     rpi_version_number = 4
 if rpi_version_number == 5:
     default_i2s_bufreq_config = "-r 48000 -p 128 -n 2"
+if rpi_version_number = 86:
+    default_i2s_bufreq_config = "-r 48000 -p 256 -n 2"
 else:
     default_i2s_bufreq_config = "-r 48000 -p 256 -n 2"
 
@@ -259,6 +261,11 @@ soundcard_presets = {
         'JACKD_OPTIONS': '-P 70 -s -d alsa -d hw:#DEVNAME# -r 48000 -p 512 -n 2 -o 2 -X raw',
         'SOUNDCARD_MIXER': 'HDMI Left,HDMI Right'
     },
+    'x86_64': {
+        'SOUNDCARD_CONFIG': '',
+        'JACKD_OPTIONS': f"-P 70 -s -S -d alsa -d hw:0 {default_i2s_bufreq_config} -o 2 -X raw",
+        'SOUNDCARD_MIXER': ''
+    },
     'Dummy device': {
         'SOUNDCARD_CONFIG': '',
         'JACKD_OPTIONS': '-P 70 -s -d alsa -d hw:Dummy -r 48000 -p 256 -n 2 -X raw',
@@ -273,6 +280,11 @@ soundcard_presets = {
 
 if rpi_version_number != 5:
     del soundcard_presets["ZynAudio8x"]
+
+if rpi_version_number == 86:
+    for preset in soundcard_presets:
+        if preset.startswith("RBPi") or preset.startswith("HifiBerry") or preset.startswith("AudioInjector") or preset.startswith("IQAudio") preset.startswith("PiSound"):
+            del soundcard_presets[preset]
 
 try:
     zynthian_engine_alsa_mixer.init_zynapi_instance()
@@ -338,7 +350,7 @@ class AudioConfigHandler(ZynthianConfigHandler):
         if device not in device_list:
             device_list.insert(0, f"{device} (Not detected)")
 
-        if os.environ.get('ZYNTHIAN_KIT_VERSION') != 'Custom':
+        if os.environ.get('ZYNTHIAN_KIT_VERSION') != 'Custom' and os.environ.get('ZYNTHIAN_KIT_VERSION') != 'x86_64':
             custom_options_disabled = True
             config['ZYNTHIAN_MESSAGE'] = {
                 'type': 'html',
