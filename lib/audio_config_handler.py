@@ -40,7 +40,7 @@ except:
     rpi_version_number = 4
 if rpi_version_number == 5:
     default_i2s_bufreq_config = "-r 48000 -p 128 -n 2"
-if rpi_version_number = 86:
+if rpi_version_number == 86:
     default_i2s_bufreq_config = "-r 48000 -p 256 -n 2"
 else:
     default_i2s_bufreq_config = "-r 48000 -p 256 -n 2"
