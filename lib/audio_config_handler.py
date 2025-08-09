@@ -284,8 +284,7 @@ if rpi_version_number != 5:
 if rpi_version_number == 86:
     keys_to_delete = [
         key for key in soundcard_presets
-        if key.startswith("RBPi")
-        or key.startswith("HifiBerry")
+        if key.startswith("HifiBerry")
         or key.startswith("AudioInjector")
         or key.startswith("IQAudio")
         or key.startswith("PiSound")
