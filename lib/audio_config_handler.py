@@ -282,9 +282,16 @@ if rpi_version_number != 5:
     del soundcard_presets["ZynAudio8x"]
 
 if rpi_version_number == 86:
-    for preset in soundcard_presets:
-        if preset.startswith("RBPi") or preset.startswith("HifiBerry") or preset.startswith("AudioInjector") or preset.startswith("IQAudio") preset.startswith("PiSound"):
-            del soundcard_presets[preset]
+    keys_to_delete = [
+        key for key in soundcard_presets
+        if key.startswith("RBPi")
+        or key.startswith("HifiBerry")
+        or key.startswith("AudioInjector")
+        or key.startswith("IQAudio")
+        or key.startswith("PiSound")
+    ]
+    for key in keys_to_delete:
+        del soundcard_presets[key]
 
 try:
     zynthian_engine_alsa_mixer.init_zynapi_instance()
