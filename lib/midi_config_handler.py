@@ -441,12 +441,6 @@ class MidiConfigHandler(ZynthianConfigHandler):
                         'value': self.get_midi_env('ZYNTHIAN_MIDI_PRESET_PRELOAD_NOTEON', '1'),
                         'advanced': False
             },
-            'ZYNTHIAN_MIDI_SYS_ENABLED': {
-                'type': 'boolean',
-                'title': 'Enable System Messages (Transport)',
-                        'value': self.get_midi_env('ZYNTHIAN_MIDI_SYS_ENABLED', '1'),
-                        'advanced': False
-            },
             'ZYNTHIAN_MIDI_FINE_TUNING': {
                 'type': 'text',
                 'title': 'MIDI fine tuning (Hz)',
@@ -546,8 +540,6 @@ class MidiConfigHandler(ZynthianConfigHandler):
     def post(self):
         self.request.arguments['ZYNTHIAN_MIDI_FILTER_OUTPUT'] = self.request.arguments.get(
             'ZYNTHIAN_MIDI_FILTER_OUTPUT', '0')
-        self.request.arguments['ZYNTHIAN_MIDI_SYS_ENABLED'] = self.request.arguments.get(
-            'ZYNTHIAN_MIDI_SYS_ENABLED', '0')
         self.request.arguments['ZYNTHIAN_MIDI_PRESET_PRELOAD_NOTEON'] = self.request.arguments.get(
             'ZYNTHIAN_MIDI_PRESET_PRELOAD_NOTEON', '0')
         self.request.arguments['ZYNTHIAN_MIDI_PROG_CHANGE_ZS3'] = self.request.arguments.get(
