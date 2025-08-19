@@ -438,6 +438,14 @@ class DisplayConfigHandler(ZynthianConfigHandler):
             'DISPLAY_KERNEL_OPTIONS': '',
             'FRAMEBUFFER': '/dev/fb0'
         },
+         'Generic HDMI 1920x1080': {
+            'DISPLAY_CONFIG': '',
+            'DISPLAY_WIDTH': '1920',
+            'DISPLAY_HEIGHT': '1080',
+            'DISPLAY_ROTATION': "None",
+            'DISPLAY_KERNEL_OPTIONS': '',
+            'FRAMEBUFFER': '/dev/fb0'
+        },
         'Custom Device': {
             'DISPLAY_CONFIG': '',
             'DISPLAY_WIDTH': '',
