@@ -23,11 +23,16 @@
 # ********************************************************************
 
 import os
-import liblo
 import logging
 import tornado.web
 from time import sleep
 from subprocess import check_output
+
+#there are now to possibilities for liblo, try both
+try:
+    import liblo #try the old name first
+except ImportError:
+    import pyliblo3 as liblo
 
 import zynconf
 import zyngine.zynthian_lv2 as zynthian_lv2
