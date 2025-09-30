@@ -232,8 +232,8 @@ class WiringConfigHandler(ZynthianConfigHandler):
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_ADS1115_I2C_ADDRESS': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': "",
-            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0',
-            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
+            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': "",
+            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0'
         },
         "MCP23017_ENCODERS_V5TOUCH": {
             'ZYNTHIAN_WIRING_ENCODER_A': "102,105,110,113",
@@ -259,8 +259,8 @@ class WiringConfigHandler(ZynthianConfigHandler):
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_ADS1115_I2C_ADDRESS': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': "",
-            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0',
-            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
+            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': "",
+            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0'
         },
         "MCP23017_EPDF_REVERSE": {
             'ZYNTHIAN_WIRING_ENCODER_A': "104,101,112,109",
@@ -272,8 +272,8 @@ class WiringConfigHandler(ZynthianConfigHandler):
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_ADS1115_I2C_ADDRESS': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': "",
-            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
-            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0',
+            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': "",
+            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0'
         },
         "PROTOTYPE-5": {
             'ZYNTHIAN_WIRING_ENCODER_A': "26,25,0,4",
@@ -284,8 +284,8 @@ class WiringConfigHandler(ZynthianConfigHandler):
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_ADS1115_I2C_ADDRESS': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': "",
-            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
-            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0',
+            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': "",
+            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0'
         },
         "PROTOTYPE-4": {
             'ZYNTHIAN_WIRING_ENCODER_A': "26,25,0,4",
@@ -296,8 +296,8 @@ class WiringConfigHandler(ZynthianConfigHandler):
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_ADS1115_I2C_ADDRESS': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': "",
-            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
-            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0',
+            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': "",
+            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0'
         },
         "PROTOTYPE-4B": {
             'ZYNTHIAN_WIRING_ENCODER_A': "25,26,4,0",
@@ -308,8 +308,8 @@ class WiringConfigHandler(ZynthianConfigHandler):
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_ADS1115_I2C_ADDRESS': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': "",
-            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
-            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0',
+            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': "",
+            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0'
         },
         "PROTOTYPE-4-WS32": {
             'ZYNTHIAN_WIRING_ENCODER_A': "26,25,5,4",
@@ -320,8 +320,8 @@ class WiringConfigHandler(ZynthianConfigHandler):
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_ADS1115_I2C_ADDRESS': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': "",
-            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
-            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0',
+            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': "",
+            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0'
         },
         "PROTOTYPE-3": {
             'ZYNTHIAN_WIRING_ENCODER_A': "27,21,3,7",
@@ -332,8 +332,8 @@ class WiringConfigHandler(ZynthianConfigHandler):
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_ADS1115_I2C_ADDRESS': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': "",
-            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
-            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0',
+            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': "",
+            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0'
         },
         "PROTOTYPE-3H": {
             'ZYNTHIAN_WIRING_ENCODER_A': "21,27,7,3",
@@ -344,8 +344,8 @@ class WiringConfigHandler(ZynthianConfigHandler):
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_ADS1115_I2C_ADDRESS': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': "",
-            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
-            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0',
+            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': "",
+            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0'
         },
         "PROTOTYPE-2": {
             'ZYNTHIAN_WIRING_ENCODER_A': "27,21,4,0",
@@ -356,8 +356,8 @@ class WiringConfigHandler(ZynthianConfigHandler):
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_ADS1115_I2C_ADDRESS': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': "",
-            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
-            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0',
+            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': "",
+            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0'
         },
         "PROTOTYPE-1": {
             'ZYNTHIAN_WIRING_ENCODER_A': "27,21,3,7",
@@ -366,8 +366,8 @@ class WiringConfigHandler(ZynthianConfigHandler):
             'ZYNTHIAN_WIRING_MCP23017_INTA_PIN': "",
             'ZYNTHIAN_WIRING_MCP23017_INTB_PIN': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
-            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
-            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0',
+            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': "",
+            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0'
         },
         "RBPI_GPIO": {
             'ZYNTHIAN_WIRING_ENCODER_A': "27,21,3,7",
@@ -376,8 +376,8 @@ class WiringConfigHandler(ZynthianConfigHandler):
             'ZYNTHIAN_WIRING_MCP23017_INTA_PIN': "",
             'ZYNTHIAN_WIRING_MCP23017_INTB_PIN': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
-            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
-            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0',
+            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': "",
+            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0'
         },
         "TOUCH_ONLY": {
             'ZYNTHIAN_WIRING_ENCODER_A': "-1,-1,-1,-1",
@@ -388,13 +388,13 @@ class WiringConfigHandler(ZynthianConfigHandler):
             'ZYNTHIAN_WIRING_ZYNAPTIK_CONFIG': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_ADS1115_I2C_ADDRESS': "",
             'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': "",
-            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': ""
-            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0',
+            'ZYNTHIAN_WIRING_ZYNTOF_CONFIG': "",
+            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0'
         },
         "CUSTOM": {
             'ZYNTHIAN_WIRING_ZYNAPTIK_ADS1115_I2C_ADDRESS': ADS1115_I2C_ADDRESS,
-            'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': MCP4728_I2C_ADDRESS
-            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0',
+            'ZYNTHIAN_WIRING_ZYNAPTIK_MCP4728_I2C_ADDRESS': MCP4728_I2C_ADDRESS,
+            'ZYNTHIAN_WIRING_MULTITIMBRAL': '0'
         }
     }
 
