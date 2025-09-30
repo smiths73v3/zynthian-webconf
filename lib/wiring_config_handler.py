@@ -395,6 +395,15 @@ class WiringConfigHandler(ZynthianConfigHandler):
     def get(self, errors=None):
         config = {}
 
+        config['ZYNTHIAN_WIRING_MULTITIMBRAL'] = {
+            'type': 'boolean',
+            'title': "Multi-Timbral by default",
+            'value': os.environ.get('ZYNTHIAN_WIRING_MULTITIMBRAL', '0'),
+            'advanced': True,
+            'disabled': False,
+            'refresh_on_change': False
+            }
+
         if os.environ.get('ZYNTHIAN_KIT_VERSION') != 'Custom':
             custom_options_disabled = True
             config['ZYNTHIAN_MESSAGE'] = {
@@ -1119,6 +1128,7 @@ class WiringConfigHandler(ZynthianConfigHandler):
                 iter(self.custom_profiles.items()))[0]
             self.config_env(self.request_data)
         else:
+            logging.debug("else case for Command ==> {}".format(command))
             errors = self.update_config(self.request_data)
 
         self.get(errors)
@@ -1152,18 +1162,23 @@ class WiringConfigHandler(ZynthianConfigHandler):
         ]
         for k in data:
             ignore = True
+            logging.debug("update_config() for {}".format(k))
             if k.startswith("ZYNTHIAN_WIRING_"):
+                logging.debug("partial match for {}".format(k))
                 ignore = False
                 kk = k[16:]
-            for ivn in ignore_varnames:
-                if kk.startswith(ivn):
-                    ignore = True
-                    break
+                for ivn in ignore_varnames:
+                    if kk.startswith(ivn):
+                        logging.debug("Ignore match for {}".format(kk))
+                        ignore = True
+                        break
             if not ignore and data[k][0] != os.environ.get(k):
                 logging.debug("Detected change in {} that needs restarting the UI: {} <> {}".format(
                     k, data[k][0], os.environ.get(k)))
                 self.restart_ui_flag = True
                 break
+            else:
+                logging.debug("No change detected for {}".format(k))
 
         errors = super().update_config(data)
 
