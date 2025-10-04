@@ -51,7 +51,7 @@ class WifiConfigHandler(ZynthianBasicHandler):
                 'enabled': wifi[4]
             })
         config = {
-            'ZYNTHIAN_WIFI_STATUS': zynconf.get_nwdev_status_code("wlan0"),
+            'ZYNTHIAN_WIFI_STATUS': zynconf.get_nwdev_status_code("wlo1"),
             'ZYNTHIAN_WIFI_NETWORKS': networks
         }
         if 'X-Requested-With' in self.request.headers and self.request.headers['X-Requested-With'] == 'XMLHttpRequest':
