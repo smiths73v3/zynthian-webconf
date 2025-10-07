@@ -499,7 +499,7 @@ class DisplayConfigHandler(ZynthianConfigHandler):
         }
         config['DISPLAY_ROTATION'] = {
             'type': 'select',
-            'title': "Rotation",
+            'title': "Touch Rotation",
             'value': str(os.environ.get('DISPLAY_ROTATION')),
             'options': ["None", "Inverted"],
             'disabled': custom_options_disabled

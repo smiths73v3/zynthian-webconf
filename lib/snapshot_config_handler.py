@@ -220,6 +220,8 @@ class SnapshotConfigHandler(ZynthianBasicHandler):
                 bank_num = item['bank_num']
                 prev_prog_num = ''
                 for node_item in item['nodes']:
+                    if node_item['prog_num'] == '':
+                        continue
                     if prev_prog_num == node_item['prog_num']:
                         duplicate_prog_nums += "{}/{} ".format(
                             bank_num, prev_prog_num)
