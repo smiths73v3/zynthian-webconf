@@ -136,7 +136,7 @@ class DashboardHandler(ZynthianBasicHandler):
                     },
                     'PRELOAD_PRESETS': {
                         'title': 'Preload Presets',
-                        'value': self.bool2onoff(os.environ.get('ZYNTHIAN_MIDI_PRESET_PRELOAD_NOTEON', '1')),
+                        'value': self.bool2onoff(os.environ.get('ZYNTHIAN_UI_PRESET_PRELOAD', '1')),
                         'url': "/ui-midi-options"
                     },
                     'ZS3_SUBSNAPSHOTS': {
