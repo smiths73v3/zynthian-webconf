@@ -110,10 +110,12 @@ class ExtraPacksHandler(ZynthianBasicHandler):
 
     def get_config(self):
         # Check if Hydrogen_Drumkits is installed
-        if os.path.isdir(f"{self.data_dir}/soundfonts/hydrogen"):
-            res = True
-        else:
-            res = False
+        drumkits = ["3355606kit", "Audiophob", "circAfrique v4", "Drumkit excepcional", "ElectricEmpireKit"]
+        res = True
+        for drumkit in drumkits:
+            if not os.path.isdir(f"{self.data_dir}/soundfonts/hydrogen/{drumkit}"):
+                res = False
+                break
         self.pack_info['Hydrogen_Drumkits']['installed'] = res
 
         # Check if IR_collection is installed
