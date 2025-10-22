@@ -93,7 +93,7 @@ class PianoteqHandler(ZynthianBasicHandler):
             # Install different type of files
             filename_parts = os.path.splitext(filename)
             # Pianoteq binaries
-            if filename_parts[1].lower() == '.7z':
+            if filename_parts[1].lower() in ('.7z', '.xz'):
                 errors = self.do_install_pianoteq_binary(filename)
             # Pianoteq instruments
             elif filename_parts[1].lower() == '.ptq':

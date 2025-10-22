@@ -75,7 +75,7 @@ class UiConfigHandler(ZynthianConfigHandler):
                 'title': 'Audio levels on snapshots',
                 'value': os.environ.get('ZYNTHIAN_UI_SNAPSHOT_MIXER_SETTINGS', '0')
             },
-            'ZYNTHIAN_MIDI_PRESET_PRELOAD_NOTEON': {
+            'ZYNTHIAN_UI_PRESET_PRELOAD': {
                 'type': 'boolean',
                 'title': 'Preload Presets',
                 'value': os.environ.get('ZYNTHIAN_UI_PRESET_PRELOAD', '1')
