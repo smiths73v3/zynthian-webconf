@@ -226,7 +226,7 @@ class DashboardHandler(ZynthianBasicHandler):
                     },
                     'WIFI': {
                         'title': 'Wifi',
-                        'value': zynconf.get_nwdev_status_string("wlan0"),
+                        'value': zynconf.get_nwdev_status_string("wlo1"),
                         # 'url': "/sys-wifi"
                     },
                     'IP': {
