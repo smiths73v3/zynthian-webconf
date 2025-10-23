@@ -495,14 +495,18 @@ class AudioConfigHandler(ZynthianConfigHandler):
             if changed.startswith("ALSA") or command == "SAVE":
                 jackd_options = self.get_argument('JACKD_OPTIONS', os.environ.get('JACKD_OPTIONS', "-P 70 -t 2000 -s -d alsa -d hw:0 -r 48000 -p 256 -n 2"))
                 jack_config, alsa_config = re.split('-d\salsa', jackd_options)
-                val =  self.get_argument('ALSA_DEVICE')
+                val = self.get_argument('ALSA_DEVICE')
                 if val.endswith(" (Not detected)"):
                     val = val[:-15]
+                if val in ("vc4hdmi0", "vc4hdmi1"):
+                    dtype = "hdmi"
+                else:
+                    dtype = "hw"
                 match = re.search(r"-d\s*(\S*)", alsa_config)
                 if match is None:
-                    alsa_config += f" -d hw{val}"
+                    alsa_config += f" -d {dtype}:{val}"
                 else:
-                    alsa_config = alsa_config.replace(match.group(0), f"-d hw:{val}")
+                    alsa_config = alsa_config.replace(match.group(0), f"-d {dtype}:{val}")
                 if val == "US16x08":
                     # Set default audio routing
                     for idx in range(8):

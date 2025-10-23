@@ -108,7 +108,7 @@ class DashboardHandler(ZynthianBasicHandler):
                             },
                             'STORAGE': {
                                 'title': 'Internal Storage',
-                                'value': "{} ({}/{})".format(root_info['usage'], root_info['used'], root_info['total'])
+                                'value': "{} ({}/{} {})".format(root_info['usage'], root_info['used'], root_info['total'], root_info['fs'])
                             },
                             'TEMPERATURE': {
                                 'title': 'Temperature',
@@ -136,7 +136,7 @@ class DashboardHandler(ZynthianBasicHandler):
                     },
                     'PRELOAD_PRESETS': {
                         'title': 'Preload Presets',
-                        'value': self.bool2onoff(os.environ.get('ZYNTHIAN_MIDI_PRESET_PRELOAD_NOTEON', '1')),
+                        'value': self.bool2onoff(os.environ.get('ZYNTHIAN_UI_PRESET_PRELOAD', '1')),
                         'url': "/ui-midi-options"
                     },
                     'ZS3_SUBSNAPSHOTS': {
@@ -262,7 +262,7 @@ class DashboardHandler(ZynthianBasicHandler):
                 dname = os.path.basename(exdir)
                 config['SYSTEM']['info']['MEDIA_' + dname] = {
                     'title': "USB/" + dname,
-                    'value': "{} ({}/{})".format(media_info['usage'], media_info['used'], media_info['total']),
+                    'value': "{} ({}/{} {})".format(media_info['usage'], media_info['used'], media_info['total'], media_info['fs']),
                     'url': "/lib-captures"
                 }
 
@@ -374,11 +374,11 @@ class DashboardHandler(ZynthianBasicHandler):
             volume = "/dev/mmcblk0p2\|/dev/root"
         try:
             out = check_output(
-                "df -h | grep '{}'".format(volume), shell=True).decode()
+                "df -hT | grep '{}'".format(volume), shell=True).decode()
             parts = re.split('\s+', out)
-            return {'total': parts[1], 'used': parts[2], 'free': parts[3], 'usage': parts[4]}
+            return {'fs': parts[1], 'total': parts[2], 'used': parts[3], 'free': parts[4], 'usage': parts[5]}
         except:
-            return {'total': 'NA', 'used': 'NA', 'free': 'NA', 'usage': 'NA'}
+            return {'fs': 'NA', 'total': 'NA', 'used': 'NA', 'free': 'NA', 'usage': 'NA'}
 
     @staticmethod
     def get_root_device():

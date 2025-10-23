@@ -49,6 +49,7 @@ from lib.engines_handler import EnginesHandler
 from lib.captures_config_handler import CapturesConfigHandler
 from lib.pianoteq_handler import PianoteqHandler
 from lib.dsp56300_handler import dsp56300Handler
+from lib.extrapacks_handler import ExtraPacksHandler
 from lib.zynthian_websocket_handler import ZynthianWebSocketHandler
 from lib.presets_config_handler import PresetsConfigHandler
 from lib.software_update_handler import SoftwareUpdateHandler
@@ -175,6 +176,7 @@ def make_app():
         (r"/lib-presets/(.*)$", PresetsConfigHandler),
         (r"/lib-presets/(.*)/(.*)$", PresetsConfigHandler),
         (r"/lib-captures$", CapturesConfigHandler),
+        (r"/lib-extra-packs$", ExtraPacksHandler),
         (r"/hw-kit$", KitConfigHandler),
         (r"/hw-audio$", AudioConfigHandler),
         (r"/hw-audio-mixer$", AudioMixerHandler),
@@ -184,8 +186,8 @@ def make_app():
         (r"/hw-options$", HWOptionsConfigHandler),
         (r"/sw-update$", SoftwareUpdateHandler),
         (r"/sw-pianoteq$", PianoteqHandler),
-		(r"/sw-dsp56300$", dsp56300Handler),
-		(r"/sw-engines$", EnginesHandler),
+        (r"/sw-dsp56300$", dsp56300Handler),
+        (r"/sw-engines$", EnginesHandler),
         (r"/sw-repos$", RepositoryHandler),
         (r"/ui-options$", UiConfigHandler),
         (r"/ui-keybind$", UiKeybindHandler),
