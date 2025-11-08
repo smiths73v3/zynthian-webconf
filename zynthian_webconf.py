@@ -56,6 +56,7 @@ from lib.software_update_handler import SoftwareUpdateHandler
 from lib.system_backup_handler import SystemBackupHandler
 from lib.upload_handler import UploadHandler
 from lib.midi_config_handler import MidiConfigHandler
+from lib.mackiecontrol_handler import MackiecontrolHandler
 from lib.snapshot_config_handler import SnapshotConfigHandler, SnapshotRemoveOptionHandler, SnapshotAddOptionsHandler, SnapshotDownloadHandler, SnapshotRemoveChainHandler
 from lib.wifi_config_handler import WifiConfigHandler
 from lib.hwoptions_config_handler import HWOptionsConfigHandler
@@ -194,6 +195,7 @@ def make_app():
         (r"/ui-log$", UiLogHandler),
         (r"/ui-midi-options$", MidiConfigHandler),
         (r"/ui-midi-log$", MidiLogHandler),
+        (r"/ui-midi-mackiecontrol$", MackiecontrolHandler),
         (r"/sys-wifi$", WifiConfigHandler),
         (r"/sys-backup$", SystemBackupHandler),
         (r"/sys-security$", SecurityConfigHandler),
