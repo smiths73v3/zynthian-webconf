@@ -40,61 +40,55 @@ from zyngui.zynthian_gui import zynthian_gui
 # ------------------------------------------------------------------------------
 
 
-def get_ports_config(current_midi_ports=""):
+def get_ports_config(all_clients=False):
     midi_ports = {'IN': [], 'OUT': [], 'FB': []}
     try:
         # Get MIDI ports list from jack
         client = jack.Client("ZynthianWebConf")
 
-        # Hardware ports, output/input convention are reversed => output=readable, input=writable
-        midi_in_ports = client.get_ports(
-            is_midi=True, is_physical=True, is_output=True)
-        midi_out_ports = client.get_ports(
-            is_midi=True, is_physical=True, is_input=True)
+        if all_clients:
+            midi_in_ports = client.get_ports(is_midi=True, is_output=True)
+            midi_out_ports = client.get_ports(is_midi=True, is_input=True)
+        else:
+            # Hardware ports, output/input convention are reversed => output=readable, input=writable
+            midi_in_ports = client.get_ports(is_midi=True, is_physical=True, is_output=True)
+            midi_out_ports = client.get_ports(is_midi=True, is_physical=True, is_input=True)
 
-        # Add NetUMP ports
-        netump_in_ports = client.get_ports(
-            "jacknetumpd", is_midi=True, is_physical=False, is_output=True)
-        netump_out_ports = client.get_ports(
-            "jacknetumpd", is_midi=True, is_physical=False, is_input=True)
-        try:
-            midi_in_ports.append(netump_in_ports[0])
-            midi_out_ports.append(netump_out_ports[0])
-        except:
-            pass
+            # Add NetUMP ports
+            netump_in_ports = client.get_ports("jacknetumpd", is_midi=True, is_physical=False, is_output=True)
+            netump_out_ports = client.get_ports("jacknetumpd", is_midi=True, is_physical=False, is_input=True)
+            try:
+                midi_in_ports.append(netump_in_ports[0])
+                midi_out_ports.append(netump_out_ports[0])
+            except:
+                pass
 
-        # Add RTP-Midi ports
-        rtpmidi_in_ports = client.get_ports(
-            "jackrtpmidid", is_midi=True, is_physical=False, is_output=True)
-        rtpmidi_out_ports = client.get_ports(
-            "jackrtpmidid", is_midi=True, is_physical=False, is_input=True)
-        try:
-            midi_in_ports.append(rtpmidi_in_ports[0])
-            midi_out_ports.append(rtpmidi_out_ports[0])
-        except:
-            pass
+            # Add RTP-Midi ports
+            rtpmidi_in_ports = client.get_ports("jackrtpmidid", is_midi=True, is_physical=False, is_output=True)
+            rtpmidi_out_ports = client.get_ports("jackrtpmidid", is_midi=True, is_physical=False, is_input=True)
+            try:
+                midi_in_ports.append(rtpmidi_in_ports[0])
+                midi_out_ports.append(rtpmidi_out_ports[0])
+            except:
+                pass
 
-        # Add QMidiNet ports
-        qmidinet_in_ports = client.get_ports(
-            "QmidiNet", is_midi=True, is_physical=False, is_output=True)
-        qmidinet_out_ports = client.get_ports(
-            "QmidiNet", is_midi=True, is_physical=False, is_input=True)
-        try:
-            midi_in_ports.append(qmidinet_in_ports[0])
-            midi_out_ports.append(qmidinet_out_ports[0])
-        except:
-            pass
+            # Add QMidiNet ports
+            qmidinet_in_ports = client.get_ports("QmidiNet", is_midi=True, is_physical=False, is_output=True)
+            qmidinet_out_ports = client.get_ports("QmidiNet", is_midi=True, is_physical=False, is_input=True)
+            try:
+                midi_in_ports.append(qmidinet_in_ports[0])
+                midi_out_ports.append(qmidinet_out_ports[0])
+            except:
+                pass
 
-        # Add TouchOSC-Midi ports
-        touchosc_in_ports = client.get_ports(
-            "TouchOSC Bridge", is_midi=True, is_physical=False, is_output=True)
-        touchosc_out_ports = client.get_ports(
-            "TouchOSC Bridge", is_midi=True, is_physical=False, is_input=True)
-        try:
-            midi_in_ports.append(touchosc_in_ports[0])
-            midi_out_ports.append(touchosc_out_ports[0])
-        except:
-            pass
+            # Add TouchOSC-Midi ports
+            touchosc_in_ports = client.get_ports("TouchOSC Bridge", is_midi=True, is_physical=False, is_output=True)
+            touchosc_out_ports = client.get_ports("TouchOSC Bridge", is_midi=True, is_physical=False, is_input=True)
+            try:
+                midi_in_ports.append(touchosc_in_ports[0])
+                midi_out_ports.append(touchosc_out_ports[0])
+            except:
+                pass
 
         # Generate MIDI_PORTS{IN,OUT} configuration array
         for idx, midi_port in enumerate(midi_in_ports):
@@ -350,8 +344,7 @@ class MidiConfigHandler(ZynthianConfigHandler):
         self.load_midi_profiles()
 
         # Get current MIDI ports configuration
-        current_midi_ports = self.get_midi_env(
-            'ZYNTHIAN_MIDI_PORTS', self.DEFAULT_MIDI_PORTS)
+        current_midi_ports = self.get_midi_env('ZYNTHIAN_MIDI_PORTS', self.DEFAULT_MIDI_PORTS)
         current_midi_ports = current_midi_ports.replace("\\n", "\n")
         # logging.debug("MIDI_PORTS = %s" % current_midi_ports)
         ports_config = {'MIDI_PORTS': get_ports_config(current_midi_ports)}
