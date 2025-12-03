@@ -58,7 +58,7 @@ class MidiLogHandler(ZynthianBasicHandler):
     @staticmethod
     def get_midi_in_ports():
         # Get MIDI ports
-        ports_config = get_ports_config()
+        ports_config = get_ports_config(all_clients=True)
         # MIDI Input Devices
         midi_in_ports = ports_config['IN']
         # Add Zynthian Router output ports:
